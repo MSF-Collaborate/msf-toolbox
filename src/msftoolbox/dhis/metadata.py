@@ -4,7 +4,7 @@ import urllib.parse
 import json
 import requests
 
-class dhis_class:
+class dhis_metadata:
     def __init__(self, username=None, password=None, server_url=None):
         self.DHIS2_USERNAME = username
         self.DHIS2_PASSWORD = password
