@@ -1,47 +1,35 @@
+# A build system is required to convert your code into a distributable package.
+# setuptools is the oldest and most common build tool, but we also like Poetry
 [build-system]
-requires = ["flit_core >=2,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name =  "MSF-TOOLBOX"
-authors = [
-    {name = "Derek Loots", email = "derek.loots@amsterdam.msf.org"},
-]
-description = "Sample Python Project for creating a new Python Module"
+name = "msf-toolbox"
+version = "0.1"
+description = "The backend to perform OCR on Doctors without Borders tally sheets."
 readme = "README.md"
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11"
-]
+
 requires-python = ">=3.10"
 dynamic = ["version"]
 
+# Metadata about your package in case you upload it to PYPI
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+# All the dependencies needed for running your module go here
+dependencies = [
+    "numpy",
+    "pandas",
+    "requests"
+]
+
 [project.optional-dependencies]
-spark = [
-    "pyspark>=3.0.0"
-]
-test = [
-    "bandit[toml]==1.7.5",
-    "black==23.3.0",
-    "check-manifest==0.49",
-    "flake8-bugbear==23.5.9",
-    "flake8-docstrings",
-    "flake8-formatter_junit_xml",
-    "flake8",
-    "flake8-pyproject",
-    "pre-commit==3.3.1",
-    "pylint==2.17.4",
-    "pylint_junit",
-    "pytest-cov==4.0.0",
-    "pytest-mock<3.10.1",
-    "pytest-runner",
-    "pytest==7.3.1",
-    "pytest-github-actions-annotate-failures",
-    "shellcheck-py==0.9.0.2"
-]
+
+
+# If your project contains scripts you'd like to be available command line, you can define them here.
+# The value must be of the form "<package_name>:<module_name>.<function>"
+[project.scripts]
