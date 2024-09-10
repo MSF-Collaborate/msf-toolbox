@@ -38,17 +38,18 @@ class DhisMetadata:
         if server_url is not None:
             self.dhis2_server_url = server_url
 
-    def get_response(self, url):
+    def get_response(self, url, params=None):
         """
         Makes an authenticated GET request to the specified URL and returns the JSON response.
 
         :param url: The URL to send the GET request to.
+        :param params: Optional query parameters to include in the request.
         :return: The JSON response data.
         :raises ValueError: If authentication fails.
         :raises HTTPError: For other HTTP errors.
         """
-        response = requests.get(url, auth=(self.dhis2_username, self.dhis2_password))
-
+        response = requests.get(url, auth=(self.dhis2_username, self.dhis2_password), params=params)
+        
         if response.status_code == 401:
             raise ValueError("Authentication failed. Check your username and password.")
         response.raise_for_status()
@@ -56,31 +57,32 @@ class DhisMetadata:
         return response.json()
 
     def get_all_org_units(self, **kwargs):
-        """
-        Retrieves all organization units from DHIS2 with optional query parameters.
+            """
+            Retrieves all organization units from DHIS2 with optional query parameters.
 
-        This method queries the DHIS2 API to fetch details of all organization units, supporting
-        various query parameters to filter the results.
+            This method queries the DHIS2 API to fetch details of all organization units, supporting
+            various query parameters to filter the results.
 
-        :param kwargs: Optional query parameters to filter the organization units.
-                       Supported parameters include:
-                       - userOnly (bool)
-                       - userDataViewOnly (bool)
-                       - userDataViewFallback (bool)
-                       - paging (bool) - turn to false to get more than 50 results
-                       - query (str)
-                       - level (int)
-                       - maxLevel (int)
-                       - withinUserHierarchy (bool)
-                       - withinUserSearchHierarchy (bool)
-                       - memberCollection (str)
-                       - memberObject (str)
-        :return: List of dictionaries, where each dictionary represents an organization unit.
-        """
-        url = f'{self.dhis2_server_url}/api/organisationUnits'
-        params = {k: v for k, v in kwargs.items() if v is not None}
-        data = self.get_response(url, params=params)
-        return data['organisationUnits']
+            :param kwargs: Optional query parameters to filter the organization units.
+                        Supported parameters include:
+                        - userOnly (bool)
+                        - userDataViewOnly (bool)
+                        - userDataViewFallback (bool)
+                        - paging (bool) - turn to false to get more than 50 results
+                        - query (str)
+                        - level (int)
+                        - maxLevel (int)
+                        - withinUserHierarchy (bool)
+                        - withinUserSearchHierarchy (bool)
+                        - memberCollection (str)
+                        - memberObject (str)
+            :return: List of dictionaries, where each dictionary represents an organization unit.
+            """
+            url = f'{self.dhis2_server_url}/api/organisationUnits'
+            params = {k: v for k, v in kwargs.items() if v is not None}
+            data = self.get_response(url, params=params)
+            return data['organisationUnits']
+
 
     def get_org_unit_children(self, uid):
         """
