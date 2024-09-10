@@ -1,14 +1,10 @@
 import requests
 import datetime
 import logging
-import re
 import json
 from zipfile import ZipFile
 import shutil
 import pandas as pd
-import os
-import threading
-
 
 log = logging.getLogger()
 
@@ -43,7 +39,7 @@ class PowerBI:
         Connects to the Power BI REST API.
 
         Args:
-            client_id (str): The client id.
+            client_id (str): The client id of the app registration within your Azure Tenant.
             username (str): The username.
             password (str): The password.
             tenant_id (str, optional): The tenant id. Default is "common".

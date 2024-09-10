@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "msftoolbox"
-version = "0.1.1"
+version = "0.1.2"
 description = "The backend to perform OCR on Doctors without Borders tally sheets."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -20,7 +20,9 @@ classifiers = [
 dependencies = [
     "numpy",
     "pandas",
-    "requests"
+    "requests",
+    "zipfile"
+
 ]
 
 [project.optional-dependencies]
