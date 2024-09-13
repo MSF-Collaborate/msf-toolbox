@@ -48,6 +48,7 @@ class DhisMetadata:
         :raises ValueError: If authentication fails.
         :raises HTTPError: For other HTTP errors.
         """
+        
         response = requests.get(url, auth=(self.dhis2_username, self.dhis2_password), params=params)
         
         if response.status_code == 401:
@@ -99,9 +100,7 @@ class DhisMetadata:
         """
         url = f'{self.dhis2_server_url}/api/organisationUnits/{uid}?includeChildren=true'
         data = self.get_response(url)
-        items = data['organisationUnits']
-        children = [(item['name'], item['dataSets'], item['id']) for item in items if item['id'] != uid]
-        return children
+        return data['organisationUnits']
 
     def get_data_sets_information(self, data_sets_uids):
         """
@@ -121,15 +120,13 @@ class DhisMetadata:
         data_sets = []
 
         for uid_obj in data_sets_uids:
-            uid = uid_obj['id']
-            url = f'{self.dhis2_server_url}/api/dataSets/{uid}'
+            url = f'{self.dhis2_server_url}/api/dataSets/{uid_obj}'
             data = self.get_response(url)
-            data_set = (data['name'], data['id'], data['periodType'])
-            data_sets.append(data_set)
+            data_sets.append(data)
 
         return data_sets
 
-    def get_indicators(self):
+    def get_indicators(self, **kwargs):
         """
         Retrieves all indicators from DHIS2.
 
@@ -138,10 +135,11 @@ class DhisMetadata:
         :return: List of dictionaries, where each dictionary represents an indicator.
         """
         url = f'{self.dhis2_server_url}/api/indicators'
-        data = self.get_response(url)
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
         return data['indicators']
 
-    def get_data_elements(self):
+    def get_data_elements(self, **kwargs):
         """
         Retrieves all data elements from DHIS2.
 
@@ -150,7 +148,8 @@ class DhisMetadata:
         :return: List of dictionaries, where each dictionary represents a data element.
         """
         url = f'{self.dhis2_server_url}/api/dataElements'
-        data = self.get_response(url)
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
         return data['dataElements']
 
     def get_data_elements_for_org_unit(self, org_unit_uid):
