@@ -1,17 +1,31 @@
-from azure.mgmt.resource.resources import ResourceManagementClient
+from azure.mgmt.resource import ResourceManagementClient
 from azure.keyvault.secrets import SecretClient
+from azure.identity import AzureCliCredential, DefaultAzureCredential
 
 class AzureKeyvault:
-    def __init__(self, subscription_id, credential):
+    def __init__(self, subscription_id, local_run=True):
         """
-        Initialize the AzureConnector with subscription_id and credential.
+        Initialize the AzureConnector with subscription_id and determine the credential type.
 
         Parameters:
         - subscription_id (string): ID of the Azure Subscription
-        - credential (object): The credentials to be used for authentication.
+        - local_run (bool): Flag to determine if running locally or in production.
         """
         self.subscription_id = subscription_id
-        self.credential = credential
+        self.local_run = local_run
+        self.credential = self._get_credential()
+
+    def _get_credential(self):
+        """
+        Determine the credential type based on the local_run flag.
+
+        Returns:
+        - credential (object): The credentials to be used for authentication.
+        """
+        if self.local_run:
+            return AzureCliCredential()
+        else:
+            return DefaultAzureCredential()
 
     def connect_to_subscription(self):
         """
@@ -36,3 +50,10 @@ class AzureKeyvault:
         """
         client = SecretClient(vault_url=keyvault_url, credential=self.credential)
         return client.get_secret(secret_name).value
+
+# Example usage:
+# subscription_id = 'your_subscription_id'
+# local_run = True  # Set to False if running in production
+# azure_connector = AzureConnector(subscription_id, local_run)
+# resource_client = azure_connector.connect_to_subscription()
+# secret_value = azure_connector.get_keyvault_secret('https://your-keyvault-url.vault.azure.net/', 'your_secret_name')
