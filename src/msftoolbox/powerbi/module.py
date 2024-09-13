@@ -795,17 +795,17 @@ class ReportExtractor:
         Returns:
             None
         """
-        pathFolder = f"{self.path}/temp_{self.name[:-5]}"
+        path_folder = f"{self.path}/temp_{self.name[:-5]}"
         try:
-            shutil.rmtree(pathFolder)
+            shutil.rmtree(path_folder)
         except FileNotFoundError:
-            print(f"folder {pathFolder} not present")
+            print(f"folder {path_folder} not present")
         with ZipFile(f"{self.path}/{self.name}", "r") as f:
-            f.extractall(pathFolder)
+            f.extractall(path_folder)
 
-        with open(f"{pathFolder}/Report/Layout", "r", encoding="utf-16 le") as reportFile:
+        with open(f"{path_folder}/Report/Layout", "r", encoding="utf-16 le") as report_file:
             report_layout = json.loads(
-                reportFile.read()
+                report_file.read()
             )
 
         fields = []
@@ -841,4 +841,4 @@ class ReportExtractor:
                 except (KeyError, json.JSONDecodeError):
                     pass
         self.result = fields
-        shutil.rmtree(pathFolder)
+        shutil.rmtree(path_folder)
