@@ -63,7 +63,6 @@ class DhisMetadata:
             url,
             auth=(self.dhis2_username, self.dhis2_password),
             params=params,
-            timeout=timeout,
         )
         if response.status_code == 401:
             raise ValueError("Authentication failed. Check your username and password.")
