@@ -42,4 +42,4 @@ jobs:
         if (( $(echo "$pylint_score < 6" | bc -l) )); then exit $pylint_exit_code; fi )
     - name: Run Tests with pytest and Coverage
       run: |
-        pytest src/tests --cov=src/msftoolbox --cov-report=xml
+        pytest src/tests
