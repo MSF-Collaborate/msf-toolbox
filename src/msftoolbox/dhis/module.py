@@ -211,7 +211,6 @@ class DhisMetadata:
             url,
             auth=(self.dhis2_username, self.dhis2_password),
             params=params,
-            timeout=self.timeout,
         )
 
         response.raise_for_status()
@@ -285,7 +284,6 @@ class DhisDataValues:
             headers=headers,
             params=params,
             data=data,
-            timeout=self.timeout,
         )
         response.raise_for_status()
         return response.json()
@@ -304,7 +302,6 @@ class DhisDataValues:
             url,
             auth=(self.dhis2_username, self.dhis2_password),
             params=params,
-            timeout=self.timeout,
         )
         response.raise_for_status()
         return response.json()
@@ -335,7 +332,6 @@ class DhisDataValues:
             url,
             auth=(self.dhis2_username, self.dhis2_password),
             params=params,
-            timeout=self.timeout,
         )
         response.raise_for_status()
         return response.json()
@@ -356,7 +352,6 @@ class DhisDataValues:
             auth=(self.dhis2_username, self.dhis2_password),
             headers=headers,
             data=data,
-            timeout=self.timeout,
         )
         response.raise_for_status()
         return response.json()
@@ -387,7 +382,6 @@ class DhisDataValues:
             url,
             auth=(self.dhis2_username, self.dhis2_password),
             params=params,
-            timeout=self.timeout,
         )
         response.raise_for_status()
         return response.json()
