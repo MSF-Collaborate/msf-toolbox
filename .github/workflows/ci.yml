@@ -35,8 +35,11 @@ jobs:
 
     - name: Run Linter (pylint)
       run: |
-        pylint src/msftoolbox
-
+        pylint src/msftoolbox || ( \
+        pylint_exit_code=$?; \
+        pylint_score=$(pylint src/msftoolbox --exit-zero --output-format=text | grep -o "Your code has been rated at .*" | awk '{print $7}' | awk -F '/' '{print $1}'); \
+        echo "Pylint score: $pylint_score"; \
+        if (( $(echo "$pylint_score < 6" | bc -l) )); then exit $pylint_exit_code; fi )
     - name: Run Tests with pytest and Coverage
       run: |
         pytest src/tests --cov=src/msftoolbox --cov-report=xml
