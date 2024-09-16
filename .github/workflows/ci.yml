@@ -34,12 +34,20 @@ jobs:
         python -m compileall src
 
     - name: Run Linter (pylint)
+      shell: bash
       run: |
-        pylint src/msftoolbox || ( \
-        pylint_exit_code=$?; \
-        pylint_score=$(pylint src/msftoolbox --exit-zero --output-format=text | grep -o "Your code has been rated at .*" | awk '{print $7}' | awk -F '/' '{print $1}'); \
-        echo "Pylint score: $pylint_score"; \
-        if (( $(echo "$pylint_score < 6" | bc -l) )); then exit $pylint_exit_code; fi )
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          pylint_output=$(pylint src/msftoolbox --exit-zero --output-format=text)
+          pylint_score=$(echo "$pylint_output" | grep -oP "Your code has been rated at \K[0-9.]+")
+          echo "Pylint score: $pylint_score"
+          if (( $(echo "$pylint_score < 6" | bc -l) )); then exit 1; fi
+        else
+          pylint src/msftoolbox || ( \
+          pylint_exit_code=$?; \
+          pylint_score=$(pylint src/msftoolbox --exit-zero --output-format=text | grep -o "Your code has been rated at .*" | awk '{print $7}' | awk -F '/' '{print $1}'); \
+          echo "Pylint score: $pylint_score"; \
+          if (( $(echo "$pylint_score < 6" | bc -l) )); then exit $pylint_exit_code; fi )
+        fi
     - name: Run Tests with pytest and Coverage
       run: |
         pytest src/tests
