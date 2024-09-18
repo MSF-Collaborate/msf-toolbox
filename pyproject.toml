@@ -34,7 +34,401 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+dev = [
+    "pytest",
+    "pylint",
+]
 
 # If your project contains scripts you'd like to be available command line, you can define them here.
 # The value must be of the form "<package_name>:<module_name>.<function>"
 [project.scripts]
+
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["src/tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+
+[tool.pylint.main]
+# Analyse import fallback blocks. This can be used to support both Python 2 and 3 compatible code,
+# which means that the block might have code that exists only in one or another interpreter,
+# leading to false positives when analysed.
+analyse-fallback-blocks = false
+
+# Clear in-memory caches upon conclusion of linting. Useful if running pylint in a server-like mode.
+clear-cache-post-run = false
+
+# Files or directories to be skipped. They should be base names, not paths.
+ignore = ["CVS"]
+
+# Add files or directories matching the regular expressions patterns to the ignore-list.
+# The regex matches against paths and can be in Posix or Windows format.
+ignore-paths = ""
+
+# Files or directories matching the regular expression patterns are skipped.
+# The regex matches against base names, not paths. The default value ignores Emacs file locks.
+ignore-patterns = "^\\.#"
+
+# List of module names for which member attributes should not be checked and will not be imported
+# (useful for modules/projects where namespaces are manipulated during runtime and thus existing
+# member attributes cannot be deduced by static analysis). It supports qualified module names,
+# as well as Unix pattern matching.
+ignored-modules = ""
+
+# Use multiple processes to speed up Pylint.
+# Specifying 0 will auto-detect the number of processors available to use,
+# and will cap the count on Windows to avoid hangs.
+jobs = 1
+
+# Control the amount of potential inferred values when inferring a single object.
+# This can help the performance when dealing with large functions or complex, nested conditions.
+limit-inference-results = 100
+
+# Pickle collected data for later comparisons.
+persistent = true
+
+# Resolve imports to .pyi stubs if available. May reduce no-member messages and increase
+# not-an-iterable messages.
+prefer-stubs = false
+
+# Minimum Python version to use for version dependent checks.
+# Will default to the version used to run pylint.
+py-version = "3.10"
+
+# When enabled, pylint would attempt to guess common misconfiguration and emit user-friendly hints
+# instead of false-positive error messages.
+suggestion-mode = true
+
+# Allow loading of arbitrary C extensions.
+# Extensions are imported into the active Python interpreter and may run arbitrary code.
+unsafe-load-any-extension = false
+
+[tool.pylint.basic]
+# Naming style matching correct argument names.
+argument-naming-style = "snake_case"
+
+# Naming style matching correct attribute names.
+attr-naming-style = "snake_case"
+
+# Bad variable names which should always be refused, separated by a comma.
+bad-names = ["foo", "bar", "baz", "toto", "tutu", "tata"]
+
+# Naming style matching correct class attribute names.
+class-attribute-naming-style = "any"
+
+# Naming style matching correct class constant names.
+class-const-naming-style = "UPPER_CASE"
+
+# Naming style matching correct class names.
+class-naming-style = "PascalCase"
+
+# Naming style matching correct constant names.
+const-naming-style = "UPPER_CASE"
+
+# Minimum line length for functions/classes that require docstrings, shorter ones are exempt.
+docstring-min-length = -1
+
+# Naming style matching correct function names.
+function-naming-style = "snake_case"
+
+# Good variable names which should always be accepted, separated by a comma.
+good-names = ["i", "j", "k", "ex", "Run", "_"]
+
+# Include a hint for the correct naming format with invalid-name.
+include-naming-hint = false
+
+# Naming style matching correct inline iteration names.
+inlinevar-naming-style = "any"
+
+# Naming style matching correct method names.
+method-naming-style = "snake_case"
+
+# Naming style matching correct module names.
+module-naming-style = "snake_case"
+
+# Regular expression which should only match function or class names that do not require a docstring.
+no-docstring-rgx = "^_"
+
+# Naming style matching correct variable names.
+variable-naming-style = "snake_case"
+
+[tool.pylint.classes]
+# Warn about protected attribute access inside special methods.
+check-protected-access-in-special-methods = false
+
+# List of method names used to declare (i.e., assign) instance attributes.
+defining-attr-methods = [
+    "__init__",
+    "__new__",
+    "setUp",
+    "asyncSetUp",
+    "__post_init__"
+]
+
+# List of member names which should be excluded from the protected access warning.
+exclude-protected = [
+    "_asdict",
+    "_fields",
+    "_replace",
+    "_source",
+    "_make",
+    "os._exit"
+]
+
+# List of valid names for the first argument in a class method.
+valid-classmethod-first-arg = ["cls"]
+
+# List of valid names for the first argument in a metaclass class method.
+valid-metaclass-classmethod-first-arg = ["mcs"]
+
+[tool.pylint.design]
+# Maximum number of arguments for function/method.
+max-args = 5
+
+# Maximum number of attributes for a class.
+max-attributes = 7
+
+# Maximum number of boolean expressions in an if statement.
+max-bool-expr = 5
+
+# Maximum number of branches for function/method body.
+max-branches = 12
+
+# Maximum number of locals for function/method body.
+max-locals = 15
+
+# Maximum number of parents for a class.
+max-parents = 7
+
+# Maximum number of public methods for a class.
+max-public-methods = 20
+
+# Maximum number of return/yield statements for function/method body.
+max-returns = 6
+
+# Maximum number of statements in function/method body.
+max-statements = 50
+
+# Minimum number of public methods for a class.
+min-public-methods = 2
+
+[tool.pylint.exceptions]
+# Exceptions that will emit a warning when caught.
+overgeneral-exceptions = [
+    "builtins.BaseException",
+    "builtins.Exception"
+]
+
+[tool.pylint.format]
+# Regexp for a line that is allowed to be longer than the limit.
+ignore-long-lines = "^\\s*(# )?<?https?://\\S+>?$"
+
+# Number of spaces of indent required inside a hanging or continued line.
+indent-after-paren = 4
+
+# String used as indentation unit.
+indent-string = "    "
+
+# Maximum number of characters on a single line.
+max-line-length = 130
+
+# Maximum number of lines in a module.
+max-module-lines = 1000
+
+# Allow the body of a class to be on the same line as the declaration if body contains a single statement.
+single-line-class-stmt = false
+
+# Allow the body of an if to be on the same line as the test if there is no else.
+single-line-if-stmt = false
+
+[tool.pylint.imports]
+# Force import order to recognize a module as part of a third-party library.
+known-third-party = ["enchant"]
+
+[tool.pylint.logging]
+# The type of string formatting that logging methods do.
+# 'old' means using % formatting, 'new' is for '{}' formatting.
+logging-format-style = "old"
+
+# Logging modules to check that the string format arguments are in logging function parameter format.
+logging-modules = ["logging"]
+
+[tool.pylint.messages_control]
+# Only show warnings with the listed confidence levels. Leave empty to show all.
+# Valid levels: HIGH, CONTROL_FLOW, INFERENCE, INFERENCE_FAILURE, UNDEFINED.
+confidence = [
+    "HIGH",
+    "CONTROL_FLOW",
+    "INFERENCE",
+    "INFERENCE_FAILURE",
+    "UNDEFINED"
+]
+
+# Disable the message, report, category, or checker with the given id(s).
+disable = [
+    "raw-checker-failed",
+    "bad-inline-option",
+    "locally-disabled",
+    "file-ignored",
+    "suppressed-message",
+    "useless-suppression",
+    "deprecated-pragma",
+    "use-symbolic-message-instead",
+    "use-implicit-booleaness-not-comparison-to-string",
+    "use-implicit-booleaness-not-comparison-to-zero",
+    "too-many-arguments",
+    "too-few-public-methods",
+    "no-else-return",
+    "missing-final-newline",
+    "missing-timeout",
+    "consider-using-f-string",
+    "wrong-import-order",
+    "too-many-public-methods"
+]
+
+[tool.pylint.method_args]
+# List of qualified names which require a timeout parameter.
+timeout-methods = [
+    "requests.api.delete",
+    "requests.api.get",
+    "requests.api.head",
+    "requests.api.options",
+    "requests.api.patch",
+    "requests.api.post",
+    "requests.api.put",
+    "requests.api.request"
+]
+
+[tool.pylint.miscellaneous]
+# List of note tags to take into consideration, separated by a comma.
+notes = ["FIXME", "XXX", "TODO"]
+
+[tool.pylint.refactoring]
+# Maximum number of nested blocks for function/method body.
+max-nested-blocks = 5
+
+# Complete name of functions that never return.
+never-returning-functions = ["sys.exit", "argparse.parse_error"]
+
+# Let 'consider-using-join' be raised when the separator to join on would be non-empty.
+suggest-join-with-non-empty-separator = true
+
+[tool.pylint.reports]
+# Python expression which should return a score less than or equal to 10.
+evaluation = "max(0, 0 if fatal else 10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10))"
+
+# Tells whether to display a full report or only the messages.
+reports = false
+
+# Activate the evaluation score.
+score = true
+
+[tool.pylint.similarities]
+# Comments are removed from the similarity computation.
+ignore-comments = true
+
+# Docstrings are removed from the similarity computation.
+ignore-docstrings = true
+
+# Imports are removed from the similarity computation.
+ignore-imports = true
+
+# Signatures are removed from the similarity computation.
+ignore-signatures = true
+
+# Minimum lines number of a similarity.
+min-similarity-lines = 4
+
+[tool.pylint.spelling]
+# Limits count of emitted suggestions for spelling mistakes.
+max-spelling-suggestions = 4
+
+# List of comma-separated words that should be considered directives if they appear at the beginning of a comment.
+spelling-ignore-comment-directives = [
+    "fmt: on",
+    "fmt: off",
+    "noqa:",
+    "noqa",
+    "nosec",
+    "isort:skip",
+    "mypy:"
+]
+
+# Tells whether to store unknown words to the private dictionary instead of raising a message.
+spelling-store-unknown-words = false
+
+[tool.pylint.string]
+# Controls whether inconsistent-quotes generates a warning when the quote delimiter is used inconsistently.
+check-quote-consistency = false
+
+# Controls whether implicit-str-concat should generate a warning on implicit string concatenation over line jumps.
+check-str-concat-over-line-jumps = false
+
+[tool.pylint.typecheck]
+# List of decorators that produce context managers, such as contextlib.contextmanager.
+contextmanager-decorators = ["contextlib.contextmanager"]
+
+# Tells whether to warn about missing members when the owner of the attribute is inferred to be None.
+ignore-none = true
+
+# Controls whether pylint should warn about no-member and similar checks on opaque inference results.
+ignore-on-opaque-inference = true
+
+# List of symbolic message names to ignore for Mixin members.
+ignored-checks-for-mixins = [
+    "no-member",
+    "not-async-context-manager",
+    "not-context-manager",
+    "attribute-defined-outside-init"
+]
+
+# List of class names for which member attributes should not be checked.
+ignored-classes = [
+    "optparse.Values",
+    "thread._local",
+    "_thread._local",
+    "argparse.Namespace"
+]
+
+# Show a hint with possible names when a member name was not found.
+missing-member-hint = true
+
+# The minimum edit distance a name should have to be considered a similar match for a missing member name.
+missing-member-hint-distance = 1
+
+# The total number of similar names that should be considered when showing a hint for a missing member.
+missing-member-max-choices = 1
+
+# Regex pattern to define which classes are considered mixins.
+mixin-class-rgx = ".*[Mm]ixin"
+
+[tool.pylint.variables]
+# Tells whether unused global variables should be treated as a violation.
+allow-global-unused-variables = true
+
+# List of names allowed to shadow builtins.
+allowed-redefined-builtins = ""
+
+# List of strings which can identify a callback function by name.
+callbacks = ["cb_", "_cb"]
+
+# A regular expression matching the name of dummy variables (i.e., expected to not be used).
+dummy-variables-rgx = "_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_"
+
+# Argument names that match this expression will be ignored.
+ignored-argument-names = "_.*|^ignored_|^unused_"
+
+# Tells whether we should check for unused import in __init__ files.
+init-import = false
+
+# List of qualified module names which can have objects that can redefine builtins.
+redefining-builtins-modules = [
+    "six.moves",
+    "past.builtins",
+    "future.builtins",
+    "builtins",
+    "io"
+]

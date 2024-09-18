@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-2019, windows-2022, macos-latest]
+        python-version: ['3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install .[dev]
+
+    - name: Check Syntax Errors with compileall
+      run: |
+        python -m compileall src
+
+    - name: Run Linter (pylint)
+      shell: bash
+      run: |
+        pylint_output=$(pylint src/msftoolbox --exit-zero --output-format=text)
+        pylint_score=$(echo "$pylint_output" | sed -n 's/.*rated at \([0-9.]*\).*/\1/p')
+        echo "Pylint score: $pylint_score"
+        if (( $(echo "$pylint_score < 6" | awk '{print ($1 < 6)}') )); then
+          echo "Pylint score is below 6. Failing the build."
+          exit 1
+        fi
+    - name: Run Tests with pytest and Coverage
+      run: |
+        pytest src/tests
