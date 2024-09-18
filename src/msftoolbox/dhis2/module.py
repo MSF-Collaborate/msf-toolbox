@@ -6,7 +6,7 @@ import json
 import requests
 
 
-class DhisMetadata:
+class Dhis2Metadata:
     """
     A class to interact with the DHIS2 server and retrieve metadata.
 
@@ -421,7 +421,7 @@ class DhisMetadata:
             )
 
 
-class DhisDataValues:
+class Dhis2DataValues:
     """
     A class to interact with the DHIS2 server and manage data values.
 
