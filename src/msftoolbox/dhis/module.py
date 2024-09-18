@@ -19,10 +19,11 @@ class DhisMetadata:
         """
         Initializes the DhisMetadata instance with optional DHIS2 server credentials and URL.
 
-        :param username: DHIS2 username (default: None)
-        :param password: DHIS2 password (default: None)
-        :param server_url: DHIS2 server URL (default: None)
-        :param timeout: Default timeout for requests in seconds (default: 10)
+        Args:
+            username (str, optional): DHIS2 username. Defaults to None.
+            password (str, optional): DHIS2 password. Defaults to None.
+            server_url (str, optional): DHIS2 server URL. Defaults to None.
+            timeout (int, optional): Default timeout for requests in seconds. Defaults to 10.
         """
         self.dhis2_username = username
         self.dhis2_password = password
@@ -35,9 +36,10 @@ class DhisMetadata:
 
         This method allows updating the DHIS2 server username, password, and URL.
 
-        :param username: DHIS2 username (default: None)
-        :param password: DHIS2 password (default: None)
-        :param server_url: DHIS2 server URL (default: None)
+        Args:
+            username (str, optional): DHIS2 username. Defaults to None.
+            password (str, optional): DHIS2 password. Defaults to None.
+            server_url (str, optional): DHIS2 server URL. Defaults to None.
         """
         if username is not None:
             self.dhis2_username = username
@@ -50,12 +52,17 @@ class DhisMetadata:
         """
         Makes an authenticated GET request to the specified URL and returns the JSON response.
 
-        :param url: The URL to send the GET request to.
-        :param params: Optional query parameters to include in the request.
-        :param timeout: Timeout for the request in seconds (default: instance's timeout).
-        :return: The JSON response data.
-        :raises ValueError: If authentication fails.
-        :raises HTTPError: For other HTTP errors.
+        Args:
+            url (str): The URL to send the GET request to.
+            params (dict, optional): Optional query parameters to include in the request.
+            timeout (int, optional): Timeout for the request in seconds. Defaults to instance's timeout.
+
+        Returns:
+            dict: The JSON response data.
+
+        Raises:
+            ValueError: If authentication fails.
+            HTTPError: For other HTTP errors.
         """
         if timeout is None:
             timeout = self.timeout
@@ -77,20 +84,23 @@ class DhisMetadata:
         This method queries the DHIS2 API to fetch details of all organization units,
         supporting various query parameters to filter the results.
 
-        :param kwargs: Optional query parameters to filter the organization units.
-                       Supported parameters include:
-                       - userOnly (bool)
-                       - userDataViewOnly (bool)
-                       - userDataViewFallback (bool)
-                       - paging (bool) - turn to false to get more than 50 results
-                       - query (str)
-                       - level (int)
-                       - maxLevel (int)
-                       - withinUserHierarchy (bool)
-                       - withinUserSearchHierarchy (bool)
-                       - memberCollection (str)
-                       - memberObject (str)
-        :return: List of dictionaries, where each dictionary represents an organization unit.
+        Args:
+            **kwargs: Optional query parameters to filter the organization units.
+                      Supported parameters include:
+                      - userOnly (bool)
+                      - userDataViewOnly (bool)
+                      - userDataViewFallback (bool)
+                      - paging (bool) - turn to false to get more than 50 results
+                      - query (str)
+                      - level (int)
+                      - maxLevel (int)
+                      - withinUserHierarchy (bool)
+                      - withinUserSearchHierarchy (bool)
+                      - memberCollection (str)
+                      - memberObject (str)
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents an organization unit.
         """
         url = f'{self.dhis2_server_url}/api/organisationUnits'
         params = {k: v for k, v in kwargs.items() if v is not None}
@@ -104,28 +114,83 @@ class DhisMetadata:
         This method queries the DHIS2 API to fetch details of all direct children of the given
         organization unit UID.
 
-        :param uid: The UID of the organization unit.
-        :return: List of dictionaries representing the child organization units.
+        Args:
+            uid (str): The UID of the organization unit.
+
+        Returns:
+            list: List of dictionaries representing the child organization units.
         """
         url = f'{self.dhis2_server_url}/api/organisationUnits/{uid}?includeChildren=true'
         data = self.get_response(url)
         return data['organisationUnits']
 
-    def get_data_sets_information(self, data_sets_uids):
+    def get_datasets(self, **kwargs):
         """
-        Fetches data set details from DHIS2 for each data set UID provided.
+        Retrieves all datasets from DHIS2.
 
-        :param data_sets_uids: List of data set UIDs.
-        :return: List of data set details.
+        This method queries the DHIS2 API to fetch details of all datasets.
+
+        Args:
+            **kwargs: Optional query parameters to filter the datasets.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents an dataset.
         """
-        data_sets = []
+        url = f'{self.dhis2_server_url}/api/dataSets'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['dataSets']
 
-        for uid in data_sets_uids:
-            url = f'{self.dhis2_server_url}/api/dataSets/{uid}'
-            data = self.get_response(url)
-            data_sets.append(data)
+    def get_programs(self, **kwargs):
+        """
+        Retrieves all programs from DHIS2.
 
-        return data_sets
+        This method queries the DHIS2 API to fetch details of all programs.
+
+        Args:
+            **kwargs: Optional query parameters to filter the programs.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a program.
+        """
+        url = f'{self.dhis2_server_url}/api/programs'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['programs']
+
+    def get_program_stages(self, **kwargs):
+        """
+        Retrieves all program stages from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all program stages.
+
+        Args:
+            **kwargs: Optional query parameters to filter the program stages.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a program stage.
+        """
+        url = f'{self.dhis2_server_url}/api/programStages'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['programStages']
+
+    def get_program_rules(self, **kwargs):
+        """
+        Retrieves all program stages from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all program stages.
+
+        Args:
+            **kwargs: Optional query parameters to filter the program stages.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a program stage.
+        """
+        url = f'{self.dhis2_server_url}/api/programRules'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['programRules']
 
     def get_indicators(self, **kwargs):
         """
@@ -133,12 +198,84 @@ class DhisMetadata:
 
         This method queries the DHIS2 API to fetch details of all indicators.
 
-        :return: List of dictionaries, where each dictionary represents an indicator.
+        Args:
+            **kwargs: Optional query parameters to filter the indicators.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents an indicator.
         """
         url = f'{self.dhis2_server_url}/api/indicators'
         params = {k: v for k, v in kwargs.items() if v is not None}
         data = self.get_response(url, params=params)
         return data['indicators']
+
+    def get_indicator_groups(self, **kwargs):
+        """
+        Retrieves all indicators from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all indicators.
+
+        Args:
+            **kwargs: Optional query parameters to filter the indicators.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents an indicator.
+        """
+        url = f'{self.dhis2_server_url}/api/indicatorGroups'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['indicatorGroups']
+
+    def get_program_indicators(self, **kwargs):
+        """
+        Retrieves all program indicators from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all program indicators.
+
+        Args:
+            **kwargs: Optional query parameters to filter the program indicators.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a program indicator.
+        """
+        url = f'{self.dhis2_server_url}/api/programIndicators'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['programIndicators']
+
+    def get_program_indicator_groups(self, **kwargs):
+        """
+        Retrieves all program indicator groups from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all program indicator groups.
+
+        Args:
+            **kwargs: Optional query parameters to filter the program indicator groups.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a program indicator group.
+        """
+        url = f'{self.dhis2_server_url}/api/programIndicatorGroups'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['programIndicatorGroups']
+
+    def get_indicator_groups(self, **kwargs):
+        """
+        Retrieves all program indicator groups from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all program indicator groups.
+
+        Args:
+            **kwargs: Optional query parameters to filter the program indicator groups.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a program indicator group.
+        """
+        url = f'{self.dhis2_server_url}/api/programIndicatorGroups'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['programIndicatorGroups']
 
     def get_data_elements(self, **kwargs):
         """
@@ -146,19 +283,78 @@ class DhisMetadata:
 
         This method queries the DHIS2 API to fetch details of all data elements.
 
-        :return: List of dictionaries, where each dictionary represents a data element.
+        Args:
+            **kwargs: Optional query parameters to filter the data elements.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a data element.
         """
         url = f'{self.dhis2_server_url}/api/dataElements'
         params = {k: v for k, v in kwargs.items() if v is not None}
         data = self.get_response(url, params=params)
         return data['dataElements']
 
+
+    def get_data_element_groups(self, **kwargs):
+        """
+        Retrieves all data element groups from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all data element groups.
+
+        Args:
+            **kwargs: Optional query parameters to filter the data element groups.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a data element group.
+        """
+        url = f'{self.dhis2_server_url}/api/dataElementGroups'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['dataElementGroups']
+
+    def get_option_sets(self, **kwargs):
+        """
+        Retrieves all option sets from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all option sets.
+
+        Args:
+            **kwargs: Optional query parameters to filter the option sets.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents an option set.
+        """
+        url = f'{self.dhis2_server_url}/api/optionSets'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['optionSets']
+
+    def get_options(self, **kwargs):
+        """
+        Retrieves all options from DHIS2.
+
+        This method queries the DHIS2 API to fetch details of all options.
+
+        Args:
+            **kwargs: Optional query parameters to filter the options.
+
+        Returns:
+            list: List of dictionaries, where each dictionary represents a option.
+        """
+        url = f'{self.dhis2_server_url}/api/options'
+        params = {k: v for k, v in kwargs.items() if v is not None}
+        data = self.get_response(url, params=params)
+        return data['options']
+
     def get_data_elements_for_org_unit(self, org_unit_uid):
         """
         Retrieves all data elements for a specific organization unit from DHIS2.
 
-        :param org_unit_uid: The UID of the organization unit.
-        :return: List of dictionaries representing data elements.
+        Args:
+            org_unit_uid (str): The UID of the organization unit.
+
+        Returns:
+            list: List of dictionaries representing data elements.
         """
         url = f'{self.dhis2_server_url}/api/organisationUnits/{org_unit_uid}?fields=dataSets'
         data = self.get_response(url)
@@ -185,7 +381,8 @@ class DhisMetadata:
 
         This method queries the DHIS2 API to fetch details of all predictors.
 
-        :return: List of dictionaries, where each dictionary represents a predictor.
+        Returns:
+            list: List of dictionaries, where each dictionary represents a predictor.
         """
         url = f'{self.dhis2_server_url}/api/predictors'
         data = self.get_response(url)
@@ -195,11 +392,14 @@ class DhisMetadata:
         """
         Export metadata from the DHIS2 API.
 
-        Parameters:
-        - kwargs: Additional parameters to customize the metadata export.
+        Args:
+            **kwargs: Additional parameters to customize the metadata export.
 
         Returns:
-        - response (dict): The JSON response from the API call.
+            dict: The JSON response from the API call.
+
+        Raises:
+            ValueError: If the response status code is not 200.
         """
         endpoint = '/api/metadata'
         url = f"{self.dhis2_server_url}{endpoint}"
@@ -220,6 +420,7 @@ class DhisMetadata:
                 f'Expected `200` http status response code, received: {response.status_code}'
             )
 
+
 class DhisDataValues:
     """
     A class to interact with the DHIS2 server and manage data values.
@@ -231,10 +432,11 @@ class DhisDataValues:
         """
         Initializes the DhisDataValues instance with optional DHIS2 server credentials and URL.
 
-        :param username: DHIS2 username (default: None)
-        :param password: DHIS2 password (default: None)
-        :param server_url: DHIS2 server URL (default: None)
-        :param timeout: Default timeout for requests in seconds (default: 10)
+        Args:
+            username (str, optional): DHIS2 username. Defaults to None.
+            password (str, optional): DHIS2 password. Defaults to None.
+            server_url (str, optional): DHIS2 server URL. Defaults to None.
+            timeout (int, optional): Default timeout for requests in seconds. Defaults to 10.
         """
         self.dhis2_username = username
         self.dhis2_password = password
@@ -247,9 +449,10 @@ class DhisDataValues:
 
         This method allows updating the DHIS2 server username, password, and URL.
 
-        :param username: DHIS2 username (default: None)
-        :param password: DHIS2 password (default: None)
-        :param server_url: DHIS2 server URL (default: None)
+        Args:
+            username (str, optional): DHIS2 username. Defaults to None.
+            password (str, optional): DHIS2 password. Defaults to None.
+            server_url (str, optional): DHIS2 server URL. Defaults to None.
         """
         if username is not None:
             self.dhis2_username = username
@@ -262,11 +465,15 @@ class DhisDataValues:
         """
         Sends data values to the DHIS2 server.
 
-        :param data_values: The data values to send. This can be a dictionary for JSON,
-                            XML string, or CSV string.
-        :param content_type: The content type of the data values ('json', 'xml', or 'csv').
-        :param kwargs: Additional query parameters for the request.
-        :return: The response from the DHIS2 server.
+        Args:
+            data_values (dict or str): The data values to send. This can be a dictionary for JSON,
+                                       XML string, or CSV string.
+            content_type (str, optional): The content type of the data values ('json', 'xml', or 'csv').
+                                          Defaults to 'json'.
+            **kwargs: Additional query parameters for the request.
+
+        Returns:
+            dict: The response from the DHIS2 server.
         """
         url = f'{self.dhis2_server_url}/api/dataValueSets'
         headers = {'Content-Type': f'application/{content_type}'}
@@ -291,8 +498,11 @@ class DhisDataValues:
         """
         Reads data values from the DHIS2 server.
 
-        :param kwargs: Query parameters for the request.
-        :return: The data values from the DHIS2 server.
+        Args:
+            **kwargs: Query parameters for the request.
+
+        Returns:
+            dict: The data values from the DHIS2 server.
         """
         url = f'{self.dhis2_server_url}/api/dataValueSets'
         params = {k: v for k, v in kwargs.items() if v is not None}
@@ -305,18 +515,19 @@ class DhisDataValues:
         response.raise_for_status()
         return response.json()
 
-    def delete_data_value(
-        self, data_element, period, org_unit, category_option_combo=None, attribute_option_combo=None
-    ):
+    def delete_data_value(self, data_element, period, org_unit, category_option_combo=None, attribute_option_combo=None):
         """
         Deletes a data value from the DHIS2 server.
 
-        :param data_element: The data element identifier.
-        :param period: The period identifier.
-        :param org_unit: The organization unit identifier.
-        :param category_option_combo: The category option combo identifier (optional).
-        :param attribute_option_combo: The attribute option combo identifier (optional).
-        :return: The response from the DHIS2 server.
+        Args:
+            data_element (str): The data element identifier.
+            period (str): The period identifier.
+            org_unit (str): The organization unit identifier.
+            category_option_combo (str, optional): The category option combo identifier. Defaults to None.
+            attribute_option_combo (str, optional): The attribute option combo identifier. Defaults to None.
+
+        Returns:
+            dict: The response from the DHIS2 server.
         """
         url = f'{self.dhis2_server_url}/api/dataValues'
         params = {
@@ -339,8 +550,11 @@ class DhisDataValues:
         """
         Sends an individual data value to the DHIS2 server.
 
-        :param data_value: The data value to send. This should be a dictionary.
-        :return: The response from the DHIS2 server.
+        Args:
+            data_value (dict): The data value to send. This should be a dictionary.
+
+        Returns:
+            dict: The response from the DHIS2 server.
         """
         url = f'{self.dhis2_server_url}/api/dataValues'
         headers = {'Content-Type': 'application/json'}
@@ -355,18 +569,19 @@ class DhisDataValues:
         response.raise_for_status()
         return response.json()
 
-    def read_individual_data_value(
-        self, data_element, period, org_unit, category_option_combo=None, attribute_option_combo=None
-    ):
+    def read_individual_data_value(self, data_element, period, org_unit, category_option_combo=None, attribute_option_combo=None):
         """
         Reads an individual data value from the DHIS2 server.
 
-        :param data_element: The data element identifier.
-        :param period: The period identifier.
-        :param org_unit: The organization unit identifier.
-        :param category_option_combo: The category option combo identifier (optional).
-        :param attribute_option_combo: The attribute option combo identifier (optional).
-        :return: The data value from the DHIS2 server.
+        Args:
+            data_element (str): The data element identifier.
+            period (str): The period identifier.
+            org_unit (str): The organization unit identifier.
+            category_option_combo (str, optional): The category option combo identifier. Defaults to None.
+            attribute_option_combo (str, optional): The attribute option combo identifier. Defaults to None.
+
+        Returns:
+            dict: The data value from the DHIS2 server.
         """
         url = f'{self.dhis2_server_url}/api/dataValues'
         params = {
