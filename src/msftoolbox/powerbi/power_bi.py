@@ -1,17 +1,13 @@
+
 from typing import Optional
 
 import requests
 import datetime
 import logging
-import json
-from zipfile import ZipFile
-import shutil
-import pandas as pd
 
 log = logging.getLogger()
 
-
-class PowerBI:
+class PowerBIClient:
     """
     A class to interact with the Power BI REST API.
 
@@ -56,7 +52,7 @@ class PowerBI:
         password: Optional[str] = None,
         tenant_id: Optional[str] = "common",
         client_secret: Optional[str] = None,
-    ) -> None:
+        ) -> None:
         """
         Connects to the Power BI REST API.
 
@@ -98,22 +94,21 @@ class PowerBI:
 
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         response = requests.post(
-            "https://login.microsoftonline.com/{}/oauth2/token".format(self.tenant_id),
+            f"https://login.microsoftonline.com/{self.tenant_id}/oauth2/token",
             headers=headers,
             data=body,
         )
 
         if response.status_code == 200:
             self.set_token(response.json()["access_token"])
-            log.info("Connected to the Power BI REST API with {}".format(self.username))
+            log.info("Connected to the Power BI REST API with %s", self.username)
         else:
             self.token["bearer"] = None
             self.token["expiration"] = None
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the token from the REST API".format(
+                "Error %s -- Something went wrong when trying to retrieve the token from the REST API",
                     response.status_code
                 )
-            )
 
     def verify_token(self) -> bool:
         """
@@ -151,7 +146,7 @@ class PowerBI:
         Returns:
             None
         """
-        self.token["bearer"] = "Bearer {}".format(bearer)
+        self.token["bearer"] = f"Bearer {bearer}"
         self.token["expiration"] = datetime.datetime.now() + datetime.timedelta(hours=1)
 
     def get_workspace(self, workspace_id: str) -> list:
@@ -179,17 +174,16 @@ class PowerBI:
         response = requests.get("https://api.powerbi.com/v1.0/myorg/groups", headers=headers)
 
         if response.status_code == 200:
-            ws = [result for result in response.json()["value"] if result["id"] == workspace_id]
-            if len(ws) > 0:
-                return ws[0]
+            workspace = [result for result in response.json()["value"] if result["id"] == workspace_id]
+            if len(workspace) > 0:
+                return workspace[0]
             else:
                 return None
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the workspace {}".format(
+                "Error %s -- Something went wrong when trying to retrieve the workspace %s",
                     response.status_code, workspace_id
                 )
-            )
             return None
 
     def get_workspaces(self) -> list:
@@ -216,10 +210,9 @@ class PowerBI:
             return response.json()["value"]
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the list of workspaces you have access".format(
+                "Error %s -- Something went wrong when trying to retrieve the list of workspaces you have access",
                     response.status_code
                 )
-            )
             return None
 
     def get_users_in_workspace(self, workspace_id: str) -> list:
@@ -245,17 +238,17 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.get(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/users".format(workspace_id), headers=headers
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/users",
+            headers=headers
         )
 
         if response.status_code == 200:
             return response.json()
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the list of users in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to retrieve the list of users in the workspace %s",
                     response.status_code, workspace_id
                 )
-            )
             return None
 
     def add_user_to_workspace(self, workspace_id: str, email: str, access: str = "Member") -> dict:
@@ -280,7 +273,7 @@ class PowerBI:
             headers = {"Authorization": self.token["bearer"]}
             body = {"userEmailAddress": email, "groupUserAccessRight": access}
             response = requests.post(
-                "https://api.powerbi.com/v1.0/myorg/groups/{}/users".format(workspace_id),
+                f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/users",
                 headers=headers,
                 data=body,
             )
@@ -310,7 +303,7 @@ class PowerBI:
             headers = {"Authorization": self.token["bearer"]}
             body = {"userEmailAddress": email, "groupUserAccessRight": access}
             response = requests.put(
-                "https://api.powerbi.com/v1.0/myorg/groups/{}/users".format(workspace_id),
+                f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/users",
                 headers=headers,
                 data=body,
             )
@@ -319,10 +312,9 @@ class PowerBI:
                 return {"response": response.status_code}
             else:
                 log.error(
-                    "Error {} -- Something went wrong when trying to update {} in the workspace {}".format(
+                    "Error %s -- Something went wrong when trying to update %s in the workspace %s",
                         response.status_code, email, workspace_id
                     )
-                )
                 return None
         else:
             log.error(
@@ -349,17 +341,16 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.get(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/reports".format(workspace_id), headers=headers
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/reports", headers=headers
         )
 
         if response.status_code == 200:
             return response.json()["value"]
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the list of reports in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to retrieve the list of reports in the workspace %s",
                     response.status_code, workspace_id
                 )
-            )
             return None
 
     def get_report(self, workspace_id: str, report_id: str) -> list:
@@ -381,7 +372,7 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.get(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/reports/{}".format(workspace_id, report_id),
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/reports/{report_id}",
             headers=headers,
         )
 
@@ -389,10 +380,9 @@ class PowerBI:
             return response.json()
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the report {} in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to retrieve the report %s in the workspace %s",
                     response.status_code, report_id, workspace_id
                 )
-            )
             return None
 
     def delete_report(self, workspace_id: str, report_id: str) -> dict:
@@ -414,7 +404,7 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.delete(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/reports/{}".format(workspace_id, report_id),
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/reports/{report_id}",
             headers=headers,
         )
 
@@ -422,10 +412,9 @@ class PowerBI:
             return {"response": response.status_code}
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to delete the report {} in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to delete the report %s in the workspace %s",
                     response.status_code, report_id, workspace_id
                 )
-            )
             return None
 
     def export_report(self, workspace_id: str, report_id: str, out_file: str) -> dict:
@@ -448,7 +437,7 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.get(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/reports/{}/export".format(workspace_id, report_id),
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/reports/{report_id}/export",
             headers=headers,
         )
 
@@ -458,9 +447,8 @@ class PowerBI:
             return {"response": response.status_code}
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to export the report {} in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to export the report %s in the workspace %s",
                     response.status_code, report_id, workspace_id
-                )
             )
             return None
 
@@ -478,7 +466,8 @@ class PowerBI:
             workspace_id (str): The ID of the workspace.
             report_name (str): The display name for the imported report.
             in_file (str): The path and filename of the report file to import.
-            name_conflict (str, optional): The conflict resolution strategy if a report with the same name already exists. Default is "CreateOrOverwrite".
+            name_conflict (str, optional): The conflict resolution strategy if a report with the same name already exists.
+                                           Default is "CreateOrOverwrite".
 
         Returns:
             dict: A dictionary with the response code if the report was successfully imported, otherwise None.
@@ -493,9 +482,8 @@ class PowerBI:
             headers = {"Authorization": self.token["bearer"], "Content-Type": "multipart/form-data"}
             file = {"file": open(in_file, "rb")}
             response = requests.post(
-                "https://api.powerbi.com/v1.0/myorg/groups/{}/imports?datasetDisplayName={}&nameConflict={}".format(
-                    workspace_id, report_name, name_conflict
-                ),
+                f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/imports?\
+                    datasetDisplayName={report_name}&nameConflict={name_conflict}",
                 headers=headers,
                 files=file,
             )
@@ -504,14 +492,14 @@ class PowerBI:
                 return response.json()
             else:
                 log.error(
-                    "Error {} -- Something went wrong when trying to import the report {} in the workspace {}".format(
+                    "Error %s -- Something went wrong when trying to import the report %s in the workspace %s",
                         response.status_code, in_file, workspace_id
                     )
-                )
                 return None
         else:
             log.error(
-                'Error 400 -- Please, make sure the name_conflict parameter is either "CreateOrOverwrite", "GenerateUniqueName", "Ignore" or "Overwrite"'
+                'Error 400 -- Please, make sure the name_conflict parameter is either \
+                    "CreateOrOverwrite", "GenerateUniqueName", "Ignore" or "Overwrite"'
             )
             return None
 
@@ -525,7 +513,8 @@ class PowerBI:
             workspace_id (str): The ID of the source workspace.
             report_id (str): The ID of the report to clone.
             dest_report_name (str): The name to assign to the cloned report.
-            dest_workspace_id (str, optional): The ID of the destination workspace. If not provided, the report will be cloned in the same workspace.
+            dest_workspace_id (str, optional): The ID of the destination workspace. If not provided,
+                                               the report will be cloned in the same workspace.
 
         Returns:
             dict: A dictionary with the response code if the report was successfully cloned, otherwise None.
@@ -543,7 +532,7 @@ class PowerBI:
             body = {"name": dest_report_name}
 
         response = requests.post(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/reports/{}/clone".format(workspace_id, report_id),
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/reports/{report_id}/clone",
             headers=headers,
             data=body,
         )
@@ -552,10 +541,9 @@ class PowerBI:
             return {"response": response.status_code}
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to clone the report {} in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to clone the report %s in the workspace %s",
                     response.status_code, report_id, workspace_id
                 )
-            )
             return None
 
     # Dataset
@@ -577,17 +565,17 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.get(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/datasets".format(workspace_id), headers=headers
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets",
+            headers=headers
         )
 
         if response.status_code == 200:
             return response.json()["value"]
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the list of datasets in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to retrieve the list of datasets in the workspace %s",
                     response.status_code, workspace_id
                 )
-            )
             return None
 
     def get_dataset(self, workspace_id: str, dataset_id: str) -> list:
@@ -609,7 +597,7 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.get(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/datasets/{}".format(workspace_id, dataset_id),
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets/{dataset_id}",
             headers=headers,
         )
 
@@ -617,10 +605,9 @@ class PowerBI:
             return response.json()["value"]
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the dataset {} in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to retrieve the dataset %s in the workspace %s",
                     response.status_code, dataset_id, workspace_id
                 )
-            )
             return None
 
     def get_dataset_users(self, workspace_id: str, dataset_id: str) -> list:
@@ -642,7 +629,7 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.get(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/datasets/{}/users".format(workspace_id, dataset_id),
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets/{dataset_id}/users",
             headers=headers,
         )
 
@@ -650,10 +637,9 @@ class PowerBI:
             return response.json()
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to retrieve the users of dataset {} in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to retrieve the users of dataset %s in the workspace %s",
                     response.status_code, dataset_id, workspace_id
                 )
-            )
             return None
 
     def delete_dataset(self, workspace_id: str, dataset_id: str) -> dict:
@@ -672,7 +658,7 @@ class PowerBI:
 
         headers = {"Authorization": self.token["bearer"]}
         response = requests.delete(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/datasets/{}".format(workspace_id, dataset_id),
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets/{dataset_id}",
             headers=headers,
         )
 
@@ -680,10 +666,9 @@ class PowerBI:
             return {"response": response.status_code}
         else:
             log.error(
-                "Error {} -- Something went wrong when trying to delete the dataset {} in the workspace {}".format(
+                "Error %s -- Something went wrong when trying to delete the dataset %s in the workspace %s",
                     response.status_code, dataset_id, workspace_id
                 )
-            )
             return None
 
     def refresh_dataset(
@@ -705,9 +690,7 @@ class PowerBI:
         headers = {"Authorization": self.token["bearer"]}
         body = {"notifyOption": notify_option}
         response = requests.post(
-            "https://api.powerbi.com/v1.0/myorg/groups/{}/datasets/{}/refreshes".format(
-                workspace_id, dataset_id
-            ),
+            f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets/{dataset_id}/refreshes",
             headers=headers,
             data=body,
         )
@@ -746,99 +729,6 @@ class PowerBI:
             response = requests.request(method, url, headers=headers, json=data)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.RequestException as e:
-            log.error("API call error: {}".format(e))
+        except requests.exceptions.RequestException as ex:
+            log.error("API call error: %s",ex)
             return None
-
-
-class ReportExtractor:
-    """
-    A class to extract information from Power BI report files.
-
-    This class provides methods to extract measures, columns, and aggregations from a Power BI report
-    file (with a .pbix extension). It reads the report's internal JSON configuration and extracts
-    relevant information.
-
-    Attributes:
-        path (str): The path where the report files are located.
-        name (str): The name of the report file with .pbix extension.
-        result (list): A list to store the extracted information.
-    """
-
-    def __init__(self, path, name):
-        """
-        Initializes the ReportExtractor class.
-
-        Args:
-            path (str): The path where the report files are located.
-            name (str): The name of the report file with pbix extension.
-        """
-        self.path = path
-        self.name = name
-        self.result = []
-
-    def extract(self):
-        """
-        Extracts information from the report file.
-
-        This function extracts information from a report file in a specific format.
-        The report file is a ZIP archive containing layout and configuration files.
-
-        The function performs the following steps:
-        1. Create a temporary folder based on the report name.
-        2. Extract the contents of the report file to the temporary folder.
-        3. Load the report layout from the extracted files.
-        4. Iterate over the sections of the report layout and extract information from each visual container.
-        5. Store the extracted information in a list of fields.
-        6. Remove the temporary folder.
-
-        Returns:
-            None
-        """
-        path_folder = f"{self.path}/temp_{self.name[:-5]}"
-        try:
-            shutil.rmtree(path_folder)
-        except FileNotFoundError:
-            print(f"folder {path_folder} not present")
-        with ZipFile(f"{self.path}/{self.name}", "r") as f:
-            f.extractall(path_folder)
-
-        with open(f"{path_folder}/Report/Layout", "r", encoding="utf-16 le") as report_file:
-            report_layout = json.loads(
-                report_file.read()
-            )
-
-        fields = []
-        for s in report_layout["sections"]:
-            for vc in s["visualContainers"]:
-                try:
-                    query_dict = json.loads(vc["config"])
-                    for command in query_dict["singleVisual"]["prototypeQuery"]["Select"]:
-                        if "Measure" in command.keys():
-                            # - MEASURES
-                            name = command["Name"].split(".")[1]
-                            table = command["Name"].split(".")[0]
-                            fields.append([s["displayName"], query_dict["name"], table, name, "Measure"])
-
-                        elif "Column" in command.keys():
-                            # COLUMNS
-                            name = command["Name"].split(".")[1]
-                            table = command["Name"].split(".")[0]
-                            fields.append([s["displayName"], query_dict["name"], table, name, "Column"])
-
-                        elif "Aggregation" in command.keys():
-                            # AGGREGATIONS
-                            if ("(" in command["Name"]) & (")" in command["Name"]):
-                                txt_extraction = command["Name"][
-                                    command["Name"].find("(") + 1 : command["Name"].find(")")
-                                ]
-                                name = txt_extraction.split(".")[1]
-                                table = txt_extraction.split(".")[0]
-                                fields.append(
-                                    [s["displayName"], query_dict["name"], table, name, "Aggregation"]
-                                )
-
-                except (KeyError, json.JSONDecodeError):
-                    pass
-        self.result = fields
-        shutil.rmtree(path_folder)
