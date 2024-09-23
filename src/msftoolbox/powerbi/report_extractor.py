@@ -55,8 +55,8 @@ class ReportExtractorClient:
             shutil.rmtree(path_folder)
         except FileNotFoundError:
             print(f"folder {path_folder} not present")
-        with ZipFile(f"{self.path}/{self.name}", "r") as f:
-            f.extractall(path_folder)
+        with ZipFile(f"{self.path}/{self.name}", "r") as file:
+            file.extractall(path_folder)
 
         with open(f"{path_folder}/Report/Layout", "r", encoding="utf-16 le") as report_file:
             report_layout = json.loads(
@@ -64,22 +64,34 @@ class ReportExtractorClient:
             )
 
         fields = []
-        for s in report_layout["sections"]:
-            for vc in s["visualContainers"]:
+        for section in report_layout["sections"]:
+            for visual_container in section["visualContainers"]:
                 try:
-                    query_dict = json.loads(vc["config"])
+                    query_dict = json.loads(visual_container["config"])
                     for command in query_dict["singleVisual"]["prototypeQuery"]["Select"]:
                         if "Measure" in command.keys():
                             # - MEASURES
                             name = command["Name"].split(".")[1]
                             table = command["Name"].split(".")[0]
-                            fields.append([s["displayName"], query_dict["name"], table, name, "Measure"])
+                            fields.append([
+                                section["displayName"],
+                                query_dict["name"],
+                                table,
+                                name,
+                                "Measure"
+                                ])
 
                         elif "Column" in command.keys():
                             # COLUMNS
                             name = command["Name"].split(".")[1]
                             table = command["Name"].split(".")[0]
-                            fields.append([s["displayName"], query_dict["name"], table, name, "Column"])
+                            fields.append([
+                                section["displayName"],
+                                query_dict["name"],
+                                table,
+                                name,
+                                "Column"
+                                ])
 
                         elif "Aggregation" in command.keys():
                             # AGGREGATIONS
@@ -89,9 +101,13 @@ class ReportExtractorClient:
                                 ]
                                 name = txt_extraction.split(".")[1]
                                 table = txt_extraction.split(".")[0]
-                                fields.append(
-                                    [s["displayName"], query_dict["name"], table, name, "Aggregation"]
-                                )
+                                fields.append([
+                                    section["displayName"],
+                                    query_dict["name"],
+                                    table,
+                                    name,
+                                    "Aggregation"
+                                    ])
 
                 except (KeyError, json.JSONDecodeError):
                     pass
