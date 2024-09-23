@@ -5,10 +5,10 @@ class AzureOpenAiClient:
         """
         Initialize the AzureOpenAi with the OpenAI API key and endpoint.
 
-        Parameters:
-        - open_ai_key (string): The API key for Azure OpenAI.
-        - base_endpoint (string): The base endpoint URL for Azure OpenAI.
-        - api_version (string): The API version to use (default is "2023-03-15-preview").
+        Args:
+            open_ai_key (string): The API key for Azure OpenAI.
+            base_endpoint (string): The base endpoint URL for Azure OpenAI.
+            api_version (string): The API version to use (default is "2023-03-15-preview").
         """
         self.open_ai_key = open_ai_key
         self.base_endpoint = base_endpoint
@@ -19,22 +19,32 @@ class AzureOpenAiClient:
             azure_endpoint=self.base_endpoint
         )
 
-    def chat_completions(self, model, system_content, user_content, temperature=0.3, max_tokens=1000, top_p=0.9, frequency_penalty=0, presence_penalty=0):
+    def chat_completions(
+        self,
+        model,
+        system_content,
+        user_content,
+        temperature=0.3,
+        max_tokens=1000,
+        top_p=0.9,
+        frequency_penalty=0,
+        presence_penalty=0
+        ):
         """
         Send a chat completion request to the OpenAI API.
 
-        Parameters:
-        - model (string): The model to use for the completion.
-        - system_content (string): The content for the system role.
-        - user_content (string): The content for the user role.
-        - temperature (float): Sampling temperature.
-        - max_tokens (int): Maximum number of tokens to generate.
-        - top_p (float): Nucleus sampling parameter.
-        - frequency_penalty (float): Frequency penalty parameter.
-        - presence_penalty (float): Presence penalty parameter.
+        Args:
+            model (string): The model to use for the completion.
+            system_content (string): The content for the system role.
+            user_content (string): The content for the user role.
+            temperature (float): Sampling temperature.
+            max_tokens (int): Maximum number of tokens to generate.
+            top_p (float): Nucleus sampling parameter.
+            frequency_penalty (float): Frequency penalty parameter.
+            presence_penalty (float): Presence penalty parameter.
 
         Returns:
-        - dict: The response from the OpenAI API.
+            dict: The response from the OpenAI API.
         """
         message = [
             {

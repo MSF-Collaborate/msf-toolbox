@@ -9,9 +9,9 @@ class AzureStorageAccountClient:
         """
         Initialize the AzureDataLakeConnector with datalake_url and determine the credential type.
 
-        Parameters:
-        - datalake_url (string): The URL of the storage account.
-        - local_run (bool): Flag to determine if running locally or in production.
+        Args:
+            datalake_url (string): The URL of the storage account.
+            local_run (bool): Flag to determine if running locally or in production.
         """
         self.datalake_url = datalake_url
         self.local_run = local_run
@@ -23,7 +23,7 @@ class AzureStorageAccountClient:
         Determine the credential type based on the local_run flag.
 
         Returns:
-        - credential (object): The credentials to be used for authentication.
+            credential (object): The credentials to be used for authentication.
         """
         if self.local_run:
             return AzureCliCredential()
@@ -34,11 +34,11 @@ class AzureStorageAccountClient:
         """
         Connect to a Blob container.
 
-        Parameters:
-        - datalake_container_name (string): The name of the container in the storage account.
+        Args:
+            datalake_container_name (string): The name of the container in the storage account.
 
         Returns:
-        - ContainerClient: An instance of the ContainerClient class.
+            ContainerClient: An instance of the ContainerClient class.
         """
         return self.blob_service_client.get_container_client(datalake_container_name)
 
@@ -46,12 +46,12 @@ class AzureStorageAccountClient:
         """
         Download a blob file to a stream.
 
-        Parameters:
-        - container_client (ContainerClient): An instance of the ContainerClient class.
-        - datalake_path (string): The name of the file to be downloaded.
+        Args:
+            container_client (ContainerClient): An instance of the ContainerClient class.
+            datalake_path (string): The name of the file to be downloaded.
 
         Returns:
-        - Blob: A stream containing the contents of the file.
+            Blob: A stream containing the contents of the file.
         """
         blob_client = container_client.get_blob_client(datalake_path)
         return blob_client.download_blob()
@@ -60,13 +60,13 @@ class AzureStorageAccountClient:
         """
         Download a blob file to a local file.
 
-        Parameters:
-        - container_client (ContainerClient): An instance of the ContainerClient class.
-        - datalake_path (string): The name of the file to be downloaded.
-        - destination_path (string): The local file path where the blob will be downloaded.
+        Args:
+            container_client (ContainerClient): An instance of the ContainerClient class.
+            datalake_path (string): The name of the file to be downloaded.
+            destination_path (string): The local file path where the blob will be downloaded.
 
         Returns:
-        - string: The path to the downloaded file.
+            string: The path to the downloaded file.
         """
         with open(destination_path, "wb") as file:
             blob_client = container_client.get_blob_client(datalake_path)
@@ -78,10 +78,10 @@ class AzureStorageAccountClient:
         """
         Upload an object to an Azure Blob location.
 
-        Parameters:
-        - container_client (ContainerClient): An instance of the ContainerClient class.
-        - temp_location (string): The file path for the local file to be uploaded.
-        - datalake_destination (string): The destination path in the Data Lake.
+        Args:
+            container_client (ContainerClient): An instance of the ContainerClient class.
+            temp_location (string): The file path for the local file to be uploaded.
+            datalake_destination (string): The destination path in the Data Lake.
 
         Returns: None
         """
@@ -93,12 +93,12 @@ class AzureStorageAccountClient:
         """
         List files in a specific folder within a container.
 
-        Parameters:
-        - container_client (ContainerClient): An instance of the ContainerClient class.
-        - folder_path (string): The path of the folder within the container.
+        Args:
+            container_client (ContainerClient): An instance of the ContainerClient class.
+            folder_path (string): The path of the folder within the container.
 
         Returns:
-        - List: A list of file names in the specified folder.
+            List: A list of file names in the specified folder.
         """
         blob_list = container_client.list_blobs(name_starts_with=folder_path)
         return [blob.name for blob in blob_list]
@@ -107,12 +107,12 @@ class AzureStorageAccountClient:
         """
         Download a CSV blob file and convert it to a pandas DataFrame.
 
-        Parameters:
-        - container_client (ContainerClient): An instance of the ContainerClient class.
-        - datalake_path (string): The name of the CSV file to be downloaded.
+        Args:
+            container_client (ContainerClient): An instance of the ContainerClient class.
+            datalake_path (string): The name of the CSV file to be downloaded.
 
         Returns:
-        - DataFrame: A pandas DataFrame containing the contents of the CSV file.
+            DataFrame: A pandas DataFrame containing the contents of the CSV file.
         """
         download_stream = self.download_blob_file_to_stream(container_client, datalake_path)
         csv_content = download_stream.readall()

@@ -7,9 +7,9 @@ class AzureKeyvaultClient:
         """
         Initialize the AzureConnector with subscription_id and determine the credential type.
 
-        Parameters:
-        - subscription_id (string): ID of the Azure Subscription
-        - local_run (bool): Flag to determine if running locally or in production.
+        Args:
+            subscription_id (string): ID of the Azure Subscription
+            local_run (bool): Flag to determine if running locally or in production.
         """
         self.subscription_id = subscription_id
         self.local_run = local_run
@@ -20,7 +20,7 @@ class AzureKeyvaultClient:
         Determine the credential type based on the local_run flag.
 
         Returns:
-        - credential (object): The credentials to be used for authentication.
+            credential (object): The credentials to be used for authentication.
         """
         if self.local_run:
             return AzureCliCredential()
@@ -32,7 +32,7 @@ class AzureKeyvaultClient:
         Connect to Azure Subscription.
 
         Returns:
-        - ResourceManagementClient: Client for managing resources.
+            ResourceManagementClient: Client for managing resources.
         """
         client = ResourceManagementClient(self.credential, subscription_id=self.subscription_id)
         return client
@@ -41,12 +41,12 @@ class AzureKeyvaultClient:
         """
         Get a secret from the Key Vault.
 
-        Parameters:
-        - keyvault_url (string): The URL of the Key Vault.
-        - secret_name (string): The name of the secret in the Key Vault.
+        Args:
+            keyvault_url (string): The URL of the Key Vault.
+            secret_name (string): The name of the secret in the Key Vault.
 
         Returns:
-        - String: The secret value.
+            String: The secret value.
         """
         client = SecretClient(vault_url=keyvault_url, credential=self.credential)
         return client.get_secret(secret_name).value
@@ -55,11 +55,11 @@ class AzureKeyvaultClient:
         """
         List all secrets in the Key Vault.
 
-        Parameters:
-        - keyvault_url (string): The URL of the Key Vault.
+        Args:
+            keyvault_url (string): The URL of the Key Vault.
 
         Returns:
-        - List: A list of secret names.
+            List: A list of secret names.
         """
         client = SecretClient(vault_url=keyvault_url, credential=self.credential)
         secrets = client.list_properties_of_secrets()
@@ -69,13 +69,13 @@ class AzureKeyvaultClient:
         """
         Set a secret in the Key Vault.
 
-        Parameters:
-        - keyvault_url (string): The URL of the Key Vault.
-        - secret_name (string): The name of the secret to be set in the Key Vault.
-        - secret_value (string): The value of the secret to be set in the Key Vault.
+        Args:
+            keyvault_url (string): The URL of the Key Vault.
+            secret_name (string): The name of the secret to be set in the Key Vault.
+            secret_value (string): The value of the secret to be set in the Key Vault.
 
         Returns:
-        - Secret: The newly created or updated secret.
+            Secret: The newly created or updated secret.
         """
         client = SecretClient(vault_url=keyvault_url, credential=self.credential)
         secret = client.set_secret(secret_name, secret_value)
@@ -85,12 +85,12 @@ class AzureKeyvaultClient:
         """
         Delete a secret from the Key Vault.
 
-        Parameters:
-        - keyvault_url (string): The URL of the Key Vault.
-        - secret_name (string): The name of the secret to be deleted from the Key Vault.
+        Args:
+            keyvault_url (string): The URL of the Key Vault.
+            secret_name (string): The name of the secret to be deleted from the Key Vault.
 
         Returns:
-        - DeletedSecret: The deleted secret.
+            DeletedSecret: The deleted secret.
         """
         client = SecretClient(vault_url=keyvault_url, credential=self.credential)
         deleted_secret = client.begin_delete_secret(secret_name).result()
@@ -100,12 +100,12 @@ class AzureKeyvaultClient:
         """
         List deleted secrets in the Key Vault.
 
-        Parameters:
-        - keyvault_url (string): The URL of the Key Vault.
-        - maxresults (int, optional): The maximum number of results to return.
+        Args:
+            keyvault_url (string): The URL of the Key Vault.
+            maxresults (int, optional): The maximum number of results to return.
 
         Returns:
-        - List: A list of deleted secret names.
+            List: A list of deleted secret names.
         """
         client = SecretClient(vault_url=keyvault_url, credential=self.credential)
         deleted_secrets = client.list_deleted_secrets(max_page_size=maxresults)
@@ -115,12 +115,12 @@ class AzureKeyvaultClient:
         """
         Recover a deleted secret in the Key Vault.
 
-        Parameters:
-        - keyvault_url (string): The URL of the Key Vault.
-        - secret_name (string): The name of the secret to be recovered from the Key Vault.
+        Args:
+            keyvault_url (string): The URL of the Key Vault.
+            secret_name (string): The name of the secret to be recovered from the Key Vault.
 
         Returns:
-        - Secret: The recovered secret.
+            Secret: The recovered secret.
         """
         client = SecretClient(vault_url=keyvault_url, credential=self.credential)
         recovered_secret = client.begin_recover_deleted_secret(secret_name).result()
