@@ -86,17 +86,17 @@ class Dhis2MetadataClient:
         Args:
             **kwargs: Optional query parameters to filter the organization units.
                       Supported parameters include:
-                      - userOnly (bool)
-                      - userDataViewOnly (bool)
-                      - userDataViewFallback (bool)
-                      - paging (bool) - turn to false to get more than 50 results
-                      - query (str)
-                      - level (int)
-                      - maxLevel (int)
-                      - withinUserHierarchy (bool)
-                      - withinUserSearchHierarchy (bool)
-                      - memberCollection (str)
-                      - memberObject (str)
+                          userOnly (bool)
+                          userDataViewOnly (bool)
+                          userDataViewFallback (bool)
+                          paging (bool)     turn to false to get more than 50 results
+                          query (str)
+                          level (int)
+                          maxLevel (int)
+                          withinUserHierarchy (bool)
+                          withinUserSearchHierarchy (bool)
+                          memberCollection (str)
+                          memberObject (str)
 
         Returns:
             list: List of dictionaries, where each dictionary represents an organization unit.
