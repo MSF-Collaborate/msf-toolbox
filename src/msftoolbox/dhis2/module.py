@@ -260,23 +260,6 @@ class Dhis2Metadata:
         data = self.get_response(url, params=params)
         return data['programIndicatorGroups']
 
-    def get_indicator_groups(self, **kwargs):
-        """
-        Retrieves all program indicator groups from DHIS2.
-
-        This method queries the DHIS2 API to fetch details of all program indicator groups.
-
-        Args:
-            **kwargs: Optional query parameters to filter the program indicator groups.
-
-        Returns:
-            list: List of dictionaries, where each dictionary represents a program indicator group.
-        """
-        url = f'{self.dhis2_server_url}/api/programIndicatorGroups'
-        params = {k: v for k, v in kwargs.items() if v is not None}
-        data = self.get_response(url, params=params)
-        return data['programIndicatorGroups']
-
     def get_data_elements(self, **kwargs):
         """
         Retrieves all data elements from DHIS2.
