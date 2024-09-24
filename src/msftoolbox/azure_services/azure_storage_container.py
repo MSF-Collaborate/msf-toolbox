@@ -1,5 +1,6 @@
 from azure.identity import AzureCliCredential, DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
+from typing import Union, List
 import pandas as pd
 import io
 
@@ -157,3 +158,20 @@ class AzureStorageContainerClient:
         return pd.read_csv(
             io.StringIO(csv_content.decode(encoding))
             )
+
+    def delete_files(
+        self,
+        file_paths: Union[str, List[str]]
+        ):
+        """
+        Deletes a list of blobs
+
+        Args:
+            file_paths (Union[str, List[str]]): A file path or list of file paths to delete in the container
+        """
+        if isinstance(file_paths, str):
+            # Convert single string to a list
+            file_paths = [file_paths]
+
+        # Now file_paths is always a list, process it
+        self.container_client.delete_blobs(*file_paths)
