@@ -1,7 +1,13 @@
+from typing import List, Tuple
 import openai
 
 class AzureOpenAiClient:
-    def __init__(self, open_ai_key, base_endpoint, api_version="2023-03-15-preview"):
+    def __init__(
+        self,
+        open_ai_key: str,
+        base_endpoint: str,
+        api_version: str ="2023-03-15-preview"
+        ):
         """
         Initialize the AzureOpenAi with the OpenAI API key and endpoint.
 
@@ -14,22 +20,22 @@ class AzureOpenAiClient:
         self.base_endpoint = base_endpoint
         self.api_version = api_version
         self.open_ai_client = openai.AzureOpenAI(
-            api_key=self.open_ai_key,
-            api_version=self.api_version,
-            azure_endpoint=self.base_endpoint
-        )
+            api_key=open_ai_key,
+            api_version=api_version,
+            azure_endpoint=base_endpoint
+            )
 
     def chat_completions(
         self,
-        model,
-        system_content,
-        user_content,
-        temperature=0.3,
-        max_tokens=1000,
-        top_p=0.9,
-        frequency_penalty=0,
-        presence_penalty=0
-        ):
+        model: str,
+        system_content: str,
+        user_content: str,
+        temperature: float = 0.3,
+        max_tokens: int = 1000,
+        top_p: float = 0.9,
+        frequency_penalty: float = 0,
+        presence_penalty: float = 0
+        ) -> dict:
         """
         Send a chat completion request to the OpenAI API.
 
@@ -68,3 +74,30 @@ class AzureOpenAiClient:
         )
 
         return response
+
+    def create_embedding(
+        self,
+        data_to_vectorize: str,
+        embedding_model: str = "text-embedding-ada-002",
+        embedding_dimensions: int = 1536
+        ) -> Tuple[List[dict], int]:
+        """
+        Generates embeddings for the given data using the specified embedding model.
+
+        Args:
+            data_to_vectorize (str): The text data to be converted into embeddings.
+            embedding_model (str, optional): The model to use for generating embeddings. Defaults to "text-embedding-ada-002".
+            embedding_dimensions (int, optional): The number of dimensions for the embeddings. Defaults to 1536.
+
+        Returns:
+            Tuple[List[dict], int]: A tuple containing:
+                - List[dict]: The generated embeddings.
+                - int: The total number of tokens used in the embedding process.
+        """
+        response = self.open_ai_client.embeddings.create(
+                    input=data_to_vectorize,
+                    model=embedding_model,
+                    dimensions=embedding_dimensions
+                    )
+
+        return response["data"], response["usage"]["total_tokens"]
