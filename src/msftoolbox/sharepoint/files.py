@@ -125,3 +125,43 @@ class SharePointClient:
         self.context.execute_query_with_incremental_retry()
         return files
 
+    def recursively_list_files(
+        self,
+        folder_url: str,
+        keep_metadata: bool = False
+        ) -> List[str]:
+        """
+        Recursively expands folders and lists all files.
+
+        Args:
+            folder_url (str): The server-relative URL of the starting folder.
+            keep_metadata (bool): If false returns only the server url, else the full properties object
+
+        Returns:
+            List[str]: A list of all file names in the folder and its subfolders.
+        """
+        # Get the folders in the root folder
+        folder = self.context.web.get_folder_by_server_relative_url(folder_url)
+        folders = folder.folders
+        self.context.load(folders)
+        self.context.execute_query_with_incremental_retry()
+
+        # Get all the files in the folder
+        all_files = []
+        for subfolder in folders:
+            subfolder_url = subfolder.properties['ServerRelativeUrl']
+            all_files.extend(
+                self.recursively_list_files(
+                    subfolder_url
+                    )
+                )
+
+        all_files.extend(
+            self.list_files_in_folder(
+                folder_url,
+                keep_metadata
+                )
+            )
+
+        return all_files
+
