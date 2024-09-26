@@ -165,3 +165,39 @@ class SharePointClient:
 
         return all_files
 
+    def create_folder_if_not_exists(
+        self,
+        folder_url
+        ):
+        """Creates a folder if it does not exist at the specified server-relative URL.
+
+        Args:
+            folder_url (str): The server-relative URL of the starting folder.
+
+        Returns:
+            str: The server-relative URL of the starting folder.
+        """
+        folder = (
+            self.context.web.ensure_folder_path(folder_url)
+            .get()
+            .select(["ServerRelativePath"])
+            .execute_query()
+        )
+        return folder.server_relative_path
+
+    # def execute_query_with_incremental_retry(
+    #     self
+    #     ) -> None:
+    #     """
+    #     Executes a query with throttling handling.
+    #     Retries the request after a delay if throttled.
+    #     """
+    #     try:
+    #         self.context.execute_query()
+    #     except Exception as ex:
+    #         if "429" in str(ex):
+    #             print("Throttled by SharePoint, waiting for 30 seconds...")
+    #             time.sleep(30)
+    #             self.context.execute_query_with_incremental_retry()
+    #         else:
+    #             raise ex
