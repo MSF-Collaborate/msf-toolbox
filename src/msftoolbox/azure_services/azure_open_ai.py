@@ -1,5 +1,6 @@
 from typing import List, Tuple
 import openai
+import json
 
 class AzureOpenAiClient:
     def __init__(
@@ -100,4 +101,6 @@ class AzureOpenAiClient:
                     dimensions=embedding_dimensions
                     )
 
-        return response["data"], response["usage"]["total_tokens"]
+        response_json = json.loads(response.json())
+
+        return response_json["data"], response_json["usage"]["total_tokens"]
