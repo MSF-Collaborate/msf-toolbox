@@ -235,6 +235,47 @@ class SharePointClient:
 
         return all_files
 
+
+    def recursively_list_folders(
+        self,
+        folder_url: str,
+        keep_metadata: bool = False
+        ) -> List[str]:
+        """
+        Recursively expands folders and lists all files.
+
+        Args:
+            folder_url (str): The server-relative URL of the starting folder.
+            keep_metadata (bool): If false returns only the server url, else the full properties object
+
+        Returns:
+            List[str]: A list of all file names in the folder and its subfolders.
+        """
+        # Get the folders in the root folder
+        folders = self.list_folders_in_folder(
+            folder_url
+            )
+
+        # Get all the files in the folder
+        all_folders = []
+        for subfolder in folders:
+            subfolder_url = subfolder["ServerRelativeUrl"]
+            all_folders.extend(
+                self.recursively_list_folders(
+                    subfolder_url,
+                    keep_metadata
+                    )
+                )
+
+        all_folders.extend(
+            self.list_folders_in_folder(
+                folder_url,
+                keep_metadata
+                )
+            )
+
+        return all_folders
+
     def create_folder_if_not_exists(
         self,
         folder_url
