@@ -20,6 +20,7 @@ class AzureKeyvaultClient:
         Args:
             keyvault_url (string): The URL of the Key Vault.
             local_run (bool): Flag to determine if running locally or in production.
+            managed_identity_client_id (str): The managed_identity_client_id required for ManagedIdentityCredentials
         """
         self.local_run = local_run
         self.managed_identity_client_id = managed_identity_client_id
