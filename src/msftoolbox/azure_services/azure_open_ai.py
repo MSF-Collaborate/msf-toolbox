@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 import openai
 import json
 
@@ -36,7 +36,7 @@ class AzureOpenAiClient:
         top_p: float = 0.9,
         frequency_penalty: float = 0,
         presence_penalty: float = 0,
-        extra_body: Optional[dict] = None
+        **kwargs
         ) -> dict:
         """
         Send a chat completion request to the OpenAI API.
@@ -50,8 +50,7 @@ class AzureOpenAiClient:
             top_p (float): Nucleus sampling parameter.
             frequency_penalty (float): Frequency penalty parameter.
             presence_penalty (float): Presence penalty parameter.
-            extra_body: The extra body for the API call. Used for instance to indicate
-                a data source for a RAG application.
+            **kwargs: Additional keyword arguments for the API call.
 
         Returns:
             dict: The response from the OpenAI API.
@@ -75,7 +74,7 @@ class AzureOpenAiClient:
             top_p=top_p,
             frequency_penalty=frequency_penalty,
             presence_penalty=presence_penalty,
-            extra_body=extra_body
+            **kwargs
         )
 
         return response
