@@ -75,7 +75,7 @@ class SharePointClient:
                     "TimeLastModified"
                     ]
                 } for file in files]
-        
+
         return records
 
 
@@ -275,6 +275,72 @@ class SharePointClient:
             )
 
         return all_folders
+
+    def move_file_to_folder(
+        self,
+        source_file_url: str,
+        destination_folder_url: str,
+        overwrite: bool = False
+        ):
+        """
+        Moves a file from the specified url to a destination folder.
+        Important: The destination_folder_url should not include the name.
+
+        Args:
+            source_file_url (str): The local path of the file too upload.
+            destination_url (str): The server-relative URL of the folder destination.
+            overwrite (bool): Determines the behaviour if a file is at the specified destination.
+        """
+
+        file = self.context.web.get_file_by_server_relative_url(
+            source_file_url
+            )
+
+        file.moveto(destination_folder_url, int(overwrite))
+        self.context.execute_query_with_incremental_retry()
+        return None
+
+    def rename_file(
+        self,
+        file_url,
+        new_file_name
+        ):
+        """Renames the file at the specified server relative url
+
+        Args:
+            file_url (str): The server-relative URL of the file.
+            new_file_name (str): The name of the new file without the path
+        """
+        if os.path.basename(new_file_name) != new_file_name:
+            raise ValueError("new_file_name should not contain a path.")
+
+        file = self.context.web.get_file_by_server_relative_url(
+            file_url
+            )
+
+        file.rename(new_file_name)
+        self.context.execute_query_with_incremental_retry()
+
+        return None
+
+    def recycle_file(
+        self,
+        file_url
+        ):
+        """Places a file in the recycle bin.
+
+        Args:
+            file_url (str): The server-relative URL of the file.
+        """
+
+        file = self.context.web.get_file_by_server_relative_url(
+            file_url
+            )
+
+        file.recycle()
+        self.context.execute_query_with_incremental_retry()
+
+        return None
 
     def create_folder_if_not_exists(
         self,
