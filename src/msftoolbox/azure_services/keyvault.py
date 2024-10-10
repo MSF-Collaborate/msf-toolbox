@@ -1,6 +1,6 @@
 from typing import Optional
 from azure.keyvault.secrets import SecretClient
-from azure.identity import AzureCliCredential, DefaultAzureCredential
+from azure.identity import AzureCliCredential, DefaultAzureCredential, ManagedIdentityCredential
 
 class AzureKeyvaultClient:
     """
@@ -11,7 +11,8 @@ class AzureKeyvaultClient:
     def __init__(
         self,
         keyvault_url: str,
-        local_run: bool = True
+        local_run: bool = True,
+        managed_identity_client_id: str = None
         ):
         """
         Initialize the AzureConnector with subscription_id and determine the credential type.
@@ -19,8 +20,10 @@ class AzureKeyvaultClient:
         Args:
             keyvault_url (string): The URL of the Key Vault.
             local_run (bool): Flag to determine if running locally or in production.
+            managed_identity_client_id (str): The managed_identity_client_id required for ManagedIdentityCredentials
         """
         self.local_run = local_run
+        self.managed_identity_client_id = managed_identity_client_id
         self.credential = self._get_credential()
         self.keyvault_url = keyvault_url
         self.keyvault_client = SecretClient(
@@ -39,6 +42,10 @@ class AzureKeyvaultClient:
         """
         if self.local_run:
             return AzureCliCredential()
+        elif self.managed_identity_client_id is not None:
+            return ManagedIdentityCredential(
+                client_id = self.managed_identity_client_id
+                )
         else:
             return DefaultAzureCredential()
 

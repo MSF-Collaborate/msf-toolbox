@@ -35,7 +35,8 @@ class AzureOpenAiClient:
         max_tokens: int = 1000,
         top_p: float = 0.9,
         frequency_penalty: float = 0,
-        presence_penalty: float = 0
+        presence_penalty: float = 0,
+        **kwargs
         ) -> dict:
         """
         Send a chat completion request to the OpenAI API.
@@ -49,6 +50,7 @@ class AzureOpenAiClient:
             top_p (float): Nucleus sampling parameter.
             frequency_penalty (float): Frequency penalty parameter.
             presence_penalty (float): Presence penalty parameter.
+            **kwargs: Additional keyword arguments for the API call.
 
         Returns:
             dict: The response from the OpenAI API.
@@ -72,6 +74,7 @@ class AzureOpenAiClient:
             top_p=top_p,
             frequency_penalty=frequency_penalty,
             presence_penalty=presence_penalty,
+            **kwargs
         )
 
         return response
