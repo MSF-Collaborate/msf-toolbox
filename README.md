@@ -15,7 +15,7 @@ The toolbox is designed to simplify the interaction with multiple services, prov
 
 ### Limitations
 - **Scope**: The scope of this Python package will evolve and will depend on the needs of MSF. The scope is Microsoft & Azure centric and particularly useful for Data & AI related initiatives. 
-- **Support**: Limited support is available; see the "Contact & Support" section for more details.
+- **Support**: Limited support is available; see the [SUPPORT.md](SUPPORT.md) section for more details.
 
 ### What It Does
 - Provides easy-to-use and well documented classes for specific tools that are used within the context of MSF:
@@ -43,7 +43,7 @@ The toolbox is designed to simplify the interaction with multiple services, prov
 - **Installation**: Provide installation instructions, e.g., via pip.
 
 ```bash
-pip install msf-toolbox
+pip install git+https://github.com/MSF-Collaborate/msf-toolbox.git
 ```
 
 ## Reporting Issues and Requests
