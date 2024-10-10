@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Optional
 from office365.runtime.auth.user_credential import UserCredential
+from office365.runtime.auth.client_credential import ClientCredential
 from office365.sharepoint.client_context import ClientContext
 import os
 
@@ -14,23 +15,29 @@ class SharePointClient:
     def __init__(
         self,
         site_url: str,
-        username: str,
-        password: str
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None
         ):
         """
         Initializes the SharePointClient with site URL and user credentials.
 
         Args:
             site_url (str): The URL of the SharePoint site.
-            username (str): The username for authentication.
-            password (str): The password for authentication.
+            username (Optional[str]): The username for authentication.
+            password (Optional[str]): The password for authentication.
+            client_id (Optional[str]): The client ID for app authentication.
+            client_secret (Optional[str]): The client secret for app authentication.
         """
         self.site_url = site_url
 
-        self.credentials = UserCredential(
-            username,
-            password
-            )
+        if username and password:
+            self.credentials = UserCredential(username, password)
+        elif client_id and client_secret:
+            self.credentials = ClientCredential(client_id, client_secret)
+        else:
+            raise ValueError("Either username/password or client_id/client_secret must be provided.")
 
         self.context = ClientContext(
             site_url
@@ -46,7 +53,11 @@ class SharePointClient:
 
         Args:
             folder_url (str): The server-relative URL of the folder.
-            keep_metadata (bool): If false returns only the name and server url, else the full properties object
+            keep_metadata (bool): If false returns only the name and server url, else the full properties object:
+                'CheckInComment', 'CheckOutType', 'ContentTag', 'CustomizedPageStatus', 'ETag', 'Exists',
+                'ExistsAllowThrowForPolicyFailures', 'ExistsWithException', 'IrmEnabled', 'Length', 'Level',
+                'LinkingUri', 'LinkingUrl', 'MajorVersion', 'MinorVersion', 'Name', 'ServerRelativeUrl',
+                'TimeCreated', 'TimeLastModified', 'Title', 'UIVersion', 'UIVersionLabel', 'UniqueId'
         Returns:
             List[dict]: A list of file records in the folder.
         """
@@ -89,7 +100,9 @@ class SharePointClient:
 
         Args:
             folder_url (str): The server-relative URL of the folder.
-            keep_metadata (bool): If false returns only the name and server url, else the full properties object
+            keep_metadata (bool): If false returns only the name and server url, else the full properties object:
+                'Exists', 'ExistsAllowThrowForPolicyFailures', 'ExistsWithException', 'IsWOPIEnabled', 'ItemCount', 'Name',
+                'ProgID', 'ServerRelativeUrl', 'TimeCreated', 'TimeLastModified', 'UniqueId', 'WelcomePage'
 
         Returns:
             List[dict]: A list of folder records in the folder.
@@ -206,6 +219,10 @@ class SharePointClient:
         Args:
             folder_url (str): The server-relative URL of the starting folder.
             keep_metadata (bool): If false returns only the server url, else the full properties object
+                'CheckInComment', 'CheckOutType', 'ContentTag', 'CustomizedPageStatus', 'ETag', 'Exists',
+                'ExistsAllowThrowForPolicyFailures', 'ExistsWithException', 'IrmEnabled', 'Length', 'Level',
+                'LinkingUri', 'LinkingUrl', 'MajorVersion', 'MinorVersion', 'Name', 'ServerRelativeUrl',
+                'TimeCreated', 'TimeLastModified', 'Title', 'UIVersion', 'UIVersionLabel', 'UniqueId'
 
         Returns:
             List[str]: A list of all file names in the folder and its subfolders.
@@ -246,7 +263,9 @@ class SharePointClient:
 
         Args:
             folder_url (str): The server-relative URL of the starting folder.
-            keep_metadata (bool): If false returns only the server url, else the full properties object
+            keep_metadata (bool): If false returns only the server url, else the full properties object:
+                'Exists', 'ExistsAllowThrowForPolicyFailures', 'ExistsWithException', 'IsWOPIEnabled', 'ItemCount', 'Name',
+                'ProgID', 'ServerRelativeUrl', 'TimeCreated', 'TimeLastModified', 'UniqueId', 'WelcomePage'
 
         Returns:
             List[str]: A list of all file names in the folder and its subfolders.
