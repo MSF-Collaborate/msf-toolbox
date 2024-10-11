@@ -1,11 +1,5 @@
-# TODO: The maintainer of this repo has not yet edited this file
+## Support
 
-**REPO OWNER**: Do you want Customer Service & Support (CSS) support for this product/project?
+Our support is very limited. For any concerns or inquiries, please contact us at [derek.loots@amsterdam.msf.org](mailto:derek.loots@amsterdam.msf.org).
 
-- **No CSS support:** Fill out this template with information about how to file issues and get help.
-
-*Then remove this first heading from this SUPPORT.MD file before publishing your repo.*
-
-# Support
-
-
+Please note that we rely on our BSD 3-Clause License, which provides the software "as is" without any warranties. We appreciate your understanding and cooperation.
