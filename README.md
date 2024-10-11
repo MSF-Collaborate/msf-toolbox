@@ -40,7 +40,7 @@ The toolbox is designed to simplify the interaction with multiple services, prov
 
 - **Language**: Python > 3.10
 - **Dependencies**: Check pyproject.toml
-- **Installation**: Provide installation instructions, e.g., via pip.
+- **Installation**:
 
 ```bash
 pip install git+https://github.com/MSF-Collaborate/msf-toolbox.git
