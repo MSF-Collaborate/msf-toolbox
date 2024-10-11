@@ -61,7 +61,6 @@ To report a bug, please include the following information:
 - **Environment**: Include details such as operating system, browser version, etc.
 - **Screenshots/Logs**: Attach any relevant screenshots or logs.
 
-Submit your bug report by emailing [derek.loots@amsterdam.msf.org](mailto:derek.loots@amsterdam.msf.org).
 
 ### Feature Requests
 
@@ -71,7 +70,6 @@ For feature requests, please provide:
 - **Use Case**: Explain why this feature is needed and how it would be used.
 - **Benefits**: Describe the benefits and potential impact on users.
 
-Submit your feature request by emailing [derek.loots@amsterdam.msf.org](mailto:derek.loots@amsterdam.msf.org).
 
 ### Security Issues
 
@@ -81,6 +79,6 @@ If you discover a security vulnerability, please report it to us directly. Do no
 - **Impact**: Explain the potential impact of the vulnerability.
 - **Steps to Reproduce**: If applicable, provide steps to reproduce the issue.
 
-Contact our security team at [derek.loots@amsterdam.msf.org](mailto:derek.loots@amsterdam.msf.org).
+Contact us for any of the aformentioned points at derek[dot]loots[at]amsterdam.msf.org
 
 Thank you for helping us improve!
