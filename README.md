@@ -2,7 +2,7 @@
 
 ## Overview
 
-The MSF Toolbox is a Python package designed to streamline the integration of various services such as SharePoint, Azure services, PowerBI, DHIS2 and more. This tool aims to facilitate faster development in the building of new tools and help in the automation of task. 
+The MSF Toolbox is a Python package designed to streamline the integration of various services such as SharePoint, Azure services, PowerBI, DHIS2 and more. This tool aims to facilitate faster development in the building of new tools and help in the automation of tasks. 
 
 ## MSF's Mission
 
