@@ -6,7 +6,7 @@
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them to the Admin [derek.loots@amsterdam.msf.org](mailto:derek.loots@amsterdam.msf.org)
+Instead, please report them to the Admin derek[dot]loots[at]amsterdam.msf.org
 
 Please include the requested information listed below (as much as you can provide) to help us better understand the nature and scope of the possible issue:
 
