@@ -15,7 +15,7 @@
 ### Initialization
 
 ```python
-from your_module import GDELTExtractor
+from msftoolbox.gdelt.articles import GDELTExtractor
 
 client = GDELTExtractor(
     sort="HybridRel",
@@ -74,7 +74,7 @@ for report in reports:
         report_url = report['url']
         report_content = client.get_report(report_url)
         report['report_text'] = report_content
-
+```
 ### Error Handling
 
 - **Download Errors**: If downloading an article fails, the method returns `None` for the text.
