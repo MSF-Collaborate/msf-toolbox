@@ -95,7 +95,14 @@ class ReliefWebExtractor():
             structured_format (bool): A predefined structure format that is either true = not nested; false = nested (default = true)
 
         Returns:
-            list: A list of reports from the response.json()["data"].
+            list: A list of dictionaries, each representing a report, with the following keys:
+                - "id": The unique identifier of the report.
+                - "title": The title of the report.
+                - "title_english": The English title of the report.
+                - "source_name": A string of source names joined by " / ".
+                - "language": A string of language names joined by " / ".
+                - "date": The original date of the report.
+                - "url": The URL to access the report.
 
         Raises:
             ValueError: If invalid values are provided for query_operator, response_format, or date format.
