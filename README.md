@@ -23,6 +23,9 @@ The toolbox is designed to simplify the interaction with multiple services, prov
     - [Sharepoint](https://www.microsoft.com/nl-nl/microsoft-365/sharepoint/collaboration)
     - [Azure](https://azure.microsoft.com/)
     - [PowerBI](https://www.microsoft.com/nl-nl/power-platform/products/power-bi)
+    - [Reliefweb](https://reliefweb.int/)
+    - [GDELT](https://www.gdeltproject.org/)
+
 - Streamlines authentication and data access processes to these tools
 - Streamlines API integration of these tools
 
