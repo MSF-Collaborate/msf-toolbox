@@ -15,7 +15,7 @@
 ### Initialization
 
 ```python
-from your_module import ReliefWebExtractor
+from msftoolbox.reliefweb.reports import ReliefWebExtractor
 
 client = ReliefWebExtractor(
     app_name="testing-rwapi",
