@@ -6,8 +6,6 @@ class ReliefWebExtractor():
     """A class that allows to list reports from the Relief Web Updates API,
     loop over the reports and store them to a datalake
 
-    Args:
-        BaseELT (BaseELT): The BaseClass for our ELT platform
     """
     def __init__(
         self,
@@ -19,11 +17,6 @@ class ReliefWebExtractor():
         """Initialises the Relief Web Extractor
 
         Args:
-            process_stage (str): The stage of the pipeline
-            source_type (str): The source of the data
-            destination_type (str): The destination of the data
-            datalake_url (str): The URL of the storage account.
-            datalake_container_name (str): The name of the container in the storage account.
             app_name (str, optional): The name of the app. Required by Relief Web for their analytics. Defaults to "testing-rwapi".
             preset (str, optional): A shorthand specification of sets of fields, filters and sort order for common use-cases.
                                     Defaults to "latest", which sorts by date for appropriate content types. Countries and sources sorted by id. .
@@ -84,8 +77,10 @@ class ReliefWebExtractor():
         query_value:str,
         query_fields:list = ["body", "title"],
         query_operator:str = "OR",
-        country_filter:list = None,
-        response_format:str = "dictionary"
+        country_iso3_filter:list = None,
+        response_format:str = "dictionary",
+        structured_format = True
+
         ) -> list:
         """List all reports matching a query with optional filters.
 
@@ -93,10 +88,11 @@ class ReliefWebExtractor():
             start_date (str): The start date in YYYY-MM-DD format.
             end_date (str): The end date in YYYY-MM-DD format.
             query_value (str): The value to search for. This is equivalent to what would be entered in the Relief Web search bar.
-            query_fields (list): The fields to search in. Allowed values can be found at: https://apidoc.reliefweb.int/fields-tables.
+            query_fields (list): The fields to search in. Allowed values can be found at: https://apidoc.reliefweb.int/fields-tables. E.g ["body", "title"]
             query_operator (str): The operator ('OR', 'AND') determining how to treat queries with multiple search keywords.
-            country_filter (list): A list of ISO3 country codes for filtering. ISO3 codes can be found at: https://www.iban.com/country-codes.
+            country_iso3_filter (list): A list of ISO3 country codes for filtering. ISO3 codes can be found at: https://www.iban.com/country-codes.
             response_format (str): The response format, either "dictionary" or "dataframe".
+            structured_format (bool): A predefined structure format that is either true = not nested; false = nested (default = true)
 
         Returns:
             list: A list of reports from the response.json()["data"].
@@ -128,11 +124,11 @@ class ReliefWebExtractor():
             raise ValueError(f"Invalid date: {start_date} or {end_date}. \
                 Dates must be in YYYY-MM-DD format.")
 
-        if country_filter is not None:
+        if country_iso3_filter is not None:
             all_filters["conditions"] .append(
                     {
                     "field": "country.iso3",
-                    "value": country_filter,
+                    "value": country_iso3_filter,
                     "operator": "OR"
                     }
                 )
@@ -163,14 +159,15 @@ class ReliefWebExtractor():
             json=payload
             )
 
-
         if response.status_code != 200:
             raise requests.HTTPError(
                 f"We have an error with status code: {response.status_code} \
                 and text: {response.text}"
             )
 
-        if response_format == "dictionary":
+        if not structured_format:
+            return response.json()["data"]
+        else:
             response_data = response.json()["data"]
             records = [
                 {
@@ -184,8 +181,6 @@ class ReliefWebExtractor():
                 } for record in response_data
             ]
             return records
-        else:
-            return pd.DataFrame(response.json()["data"])
 
 
     def get_report(
@@ -216,38 +211,3 @@ class ReliefWebExtractor():
 
         return response.json()["data"]
 
-    def parse_report_data(
-        self,
-        report_data:dict
-        ) -> dict:
-        """Returns a subset of fields. The ID of the report, the title, the status, \
-        the body, the original link and the url.
-
-        Args:
-            report_data (dict): The response from get_report
-
-        Returns:
-            dict: A dictionary containing keys id, title, status, \
-             origin_url, source_url and country
-        """
-
-        report_fields = report_data[0]["fields"]
-        fields_to_subset = {
-            "id":"id",
-            "title":"title",
-            "title_english":"title",
-            "text": "body",
-            "text_english": "body",
-            "origin_url": "origin",
-            "source_url": "url"
-        }
-
-        subset = {
-            new_key: self.try_key(original_key, report_fields)
-            for new_key, original_key in fields_to_subset.items()
-            }
-
-        subset["date"] = report_fields["date"]["original"]
-        subset["country"] = report_fields["primary_country"]["name"]
-
-        return subset

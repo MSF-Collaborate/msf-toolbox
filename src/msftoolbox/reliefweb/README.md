@@ -27,7 +27,7 @@ client = ReliefWebExtractor(
 
 ### Methods
 List Reports
-Retrieve a list of reports based on the specified parameters.
+Retrieve a list of reports based on the specified parameters. The country filter is based on country iso3 formats.
 
 ``` python
 Copy code
@@ -36,7 +36,7 @@ reports = client.list_reports(
     start_date='2024-01-01',
     end_date='2024-10-14',
     query_value='refugees',
-    country_filter=['AFG']
+    country_iso3_filter=['AFG']
 )
 ```
 
@@ -72,17 +72,16 @@ client = ReliefWebExtractor()
 start_date = '2024-01-01'
 end_date = '2024-10-14'
 query_value = 'refugees'
-country_filter = ['AFG']
+country_iso3_filter = ['AFG']
 
 # List reports
-reports = client.list_reports(start_date, end_date, query_value, country_filter=country_filter)
+reports = client.list_reports(start_date, end_date, query_value, country_iso3_filter=country_iso3_filter)
 
 # Process each report
 for report in reports:
     report_url = report['url']
     report_data = client.get_report(report_url)
-    parsed_data = client.parse_report_data(report_data)
-    print(parsed_data)
+    print(report_data)
 
 ```
 
