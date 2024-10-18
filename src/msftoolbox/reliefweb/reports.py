@@ -1,6 +1,5 @@
 import requests
-import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class ReliefWebExtractor():
     """A class that allows to list reports from the Relief Web Updates API,
