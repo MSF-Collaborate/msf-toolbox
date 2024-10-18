@@ -75,7 +75,7 @@ class ReliefWebExtractor():
         start_date:str,
         end_date:str,
         query_value:str,
-        query_fields:list = ["body", "title"],
+        query_fields:list = None,
         query_operator:str = "OR",
         country_iso3_filter:list = None,
         response_format:str = "dictionary",
@@ -111,6 +111,8 @@ class ReliefWebExtractor():
             ValueError: If invalid values are provided for query_operator, response_format, or date format.
             HttpError: If the HTTP request returns a status code other than 200.
         """
+        if query_fields is None:
+            query_fields = ["body", "title"]
 
         if query_operator not in ["OR", "AND"]:
             raise ValueError( f"Value {query_operator} not allowed for query_operator. Allowed values are: OR, AND")
