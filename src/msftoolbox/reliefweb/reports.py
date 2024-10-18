@@ -78,9 +78,7 @@ class ReliefWebExtractor():
         query_fields:list = None,
         query_operator:str = "OR",
         country_iso3_filter:list = None,
-        response_format:str = "dictionary",
-        structured_format = True
-
+        structured_format:bool = True
         ) -> list:
         """List all reports matching a query with optional filters.
 
@@ -93,7 +91,6 @@ class ReliefWebExtractor():
             query_operator (str): The operator ('OR', 'AND') determining how to treat queries with multiple search keywords.
             country_iso3_filter (list): A list of ISO3 country codes for filtering. ISO3 codes can be
                 found at: https://www.iban.com/country-codes.
-            response_format (str): The response format, either "dictionary" or "dataframe".
             structured_format (bool): A predefined structure format that is either true = not nested;
                 false = nested (default = true)
 
@@ -108,7 +105,7 @@ class ReliefWebExtractor():
                 - "url": The URL to access the report.
 
         Raises:
-            ValueError: If invalid values are provided for query_operator, response_format, or date format.
+            ValueError: If invalid values are provided for query_operator or date format.
             HttpError: If the HTTP request returns a status code other than 200.
         """
         if query_fields is None:
@@ -116,9 +113,6 @@ class ReliefWebExtractor():
 
         if query_operator not in ["OR", "AND"]:
             raise ValueError( f"Value {query_operator} not allowed for query_operator. Allowed values are: OR, AND")
-
-        if response_format not in ["dataframe", "dictionary"]:
-            raise ValueError( f"Value {response_format} not allowed for response_format. Allowed values are: dictionary, dataframe")
 
         if self.validate_date(start_date) and self.validate_date(end_date):
             all_filters = {
@@ -222,4 +216,3 @@ class ReliefWebExtractor():
             )
 
         return response.json()["data"]
-
