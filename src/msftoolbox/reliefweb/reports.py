@@ -1,3 +1,4 @@
+from unittest.mock import NonCallableMagicMock
 import requests
 from datetime import datetime
 
@@ -16,9 +17,10 @@ class ReliefWebExtractor():
         """Initialises the Relief Web Extractor
 
         Args:
-            app_name (str, optional): The name of the app. Required by Relief Web for their analytics. Defaults to "testing-rwapi".
+            app_name (str, optional): The name of the app. Required by Relief Web for their analytics.
+                Defaults to "testing-rwapi".
             preset (str, optional): A shorthand specification of sets of fields, filters and sort order for common use-cases.
-                                    Defaults to "latest", which sorts by date for appropriate content types. Countries and sources sorted by id. .
+                Defaults to "latest", which sorts by date for appropriate content types. Countries and sources sorted by id.
             limit (int, optional): How many results to return. Defaults to 1000, max 1000.
             profile (str, optional): A shorthand specification for which sets of fields to include in result.. Defaults to "full".
         """
@@ -68,7 +70,6 @@ class ReliefWebExtractor():
             # If ValueError is raised, the format is wrong or the date is invalid
             return False
 
-
     def list_reports(
         self,
         start_date:str,
@@ -87,11 +88,14 @@ class ReliefWebExtractor():
             start_date (str): The start date in YYYY-MM-DD format.
             end_date (str): The end date in YYYY-MM-DD format.
             query_value (str): The value to search for. This is equivalent to what would be entered in the Relief Web search bar.
-            query_fields (list): The fields to search in. Allowed values can be found at: https://apidoc.reliefweb.int/fields-tables. E.g ["body", "title"]
+            query_fields (list): The fields to search in. Allowed values can be found
+                at: https://apidoc.reliefweb.int/fields-tables. E.g ["body", "title"]
             query_operator (str): The operator ('OR', 'AND') determining how to treat queries with multiple search keywords.
-            country_iso3_filter (list): A list of ISO3 country codes for filtering. ISO3 codes can be found at: https://www.iban.com/country-codes.
+            country_iso3_filter (list): A list of ISO3 country codes for filtering. ISO3 codes can be
+                found at: https://www.iban.com/country-codes.
             response_format (str): The response format, either "dictionary" or "dataframe".
-            structured_format (bool): A predefined structure format that is either true = not nested; false = nested (default = true)
+            structured_format (bool): A predefined structure format that is either true = not nested;
+                false = nested (default = true)
 
         Returns:
             list: A list of dictionaries, each representing a report, with the following keys:
