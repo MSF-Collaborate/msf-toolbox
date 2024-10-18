@@ -9,10 +9,10 @@ class ReliefWebExtractor():
     """
     def __init__(
         self,
-        app_name = "testing-rwapi",
-        preset = "latest",
-        limit = 50,
-        profile = "full"
+        app_name:str = "testing-rwapi",
+        preset:str = "latest",
+        limit:int = 50,
+        profile:str = "full"
         ):
         """Initialises the Relief Web Extractor
 
@@ -22,7 +22,7 @@ class ReliefWebExtractor():
             preset (str, optional): A shorthand specification of sets of fields, filters and sort order for common use-cases.
                 Defaults to "latest", which sorts by date for appropriate content types. Countries and sources sorted by id.
             limit (int, optional): How many results to return. Defaults to 1000, max 1000.
-            profile (str, optional): A shorthand specification for which sets of fields to include in result.. Defaults to "full".
+            profile (str, optional): A shorthand specification for which sets of fields to include in result. Defaults to "full".
         """
         self.app_name = app_name
         self.preset = preset
@@ -95,7 +95,9 @@ class ReliefWebExtractor():
                 false = nested (default = true)
 
         Returns:
-            list: A list of dictionaries, each representing a report, with the following keys:
+            list: Depending on structured_format.
+            If True:
+            A list of dictionaries, each representing a report, with the following keys:
                 - "id": The unique identifier of the report.
                 - "title": The title of the report.
                 - "title_english": The English title of the report.
@@ -103,6 +105,9 @@ class ReliefWebExtractor():
                 - "language": A string of language names joined by " / ".
                 - "date": The original date of the report.
                 - "url": The URL to access the report.
+            If False:
+            A list of dictionaries with the API format
+            
 
         Raises:
             ValueError: If invalid values are provided for query_operator or date format.
@@ -196,7 +201,7 @@ class ReliefWebExtractor():
         """Get a report based on the report url.
 
         Args:
-            report_url (str): The url for the report. Typically the href the list_reports response
+            report_url (str): The url for the report. Typically the href in the list_reports response
 
         Returns:
             dict: A dictionary containing keys the full report information.
