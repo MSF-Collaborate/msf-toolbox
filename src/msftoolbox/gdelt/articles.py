@@ -1,6 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
-from urllib.error import HTTPError
 import newspaper
 
 class GDELTExtractor:
@@ -8,13 +7,9 @@ class GDELTExtractor:
         self,
         sort="HybridRel",
         limit=50
-    ):
+        ):
         self.sort = sort
         self.limit = limit
-
-    def format_date(self, date) -> str:
-        date = datetime.strptime(date, "%Y-%m-%d")
-        return datetime.strftime(date, "%Y%m%d%H%M%S")
 
     def list_reports(
         self,
@@ -42,14 +37,19 @@ class GDELTExtractor:
             HTTPError: If the HTTP request returns a status code other than 200.
         """
         base_url = "https://api.gdeltproject.org/api/v2/doc/doc"
-        start_date = self.format_date(start_date)
-        end_date = self.format_date(end_date)
+        dt_start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        dt_end_date = datetime.strptime(end_date, "%Y-%m-%d")
+        api_formatted_start_date = datetime.strftime(dt_start_date, "%Y%m%d%H%M%S")
+        api_formatted_end_date = datetime.strftime(dt_end_date, "%Y%m%d%H%M%S")
+
+        if dt_end_date - dt_start_date <= timedelta(0):
+            raise ValueError("End date must be after start date")
 
         params = {
             "query": f"{query_value} AND {country_filter}",
             "mode": mode,
-            "startdatetime": start_date,
-            "enddatetime": end_date,
+            "startdatetime": api_formatted_start_date,
+            "enddatetime": api_formatted_end_date,
             "format": "JSON",
             "trans": "googtrans"
         }
