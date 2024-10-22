@@ -3,11 +3,24 @@ import requests
 import newspaper
 
 class GDELTExtractor:
+    """
+    A class to interact with the GDELT API.
+
+    This class provides methods to list reports and download articles.
+    """
+
     def __init__(
         self,
         sort="HybridRel",
         limit=50
         ):
+        """
+        Initialise the client and store configurations
+
+        Args:
+            sort (str, optional): The sorting mechanism for the API. Defaults to "HybridRel".
+            limit (int, optional): The default value for the number of articles to list. Defaults to 50.
+        """
         self.sort = sort
         self.limit = limit
 
@@ -18,7 +31,7 @@ class GDELTExtractor:
         query_value: str,
         country_filter: list = None,
         mode: str = "ArtList"
-    ) -> list:
+        ) -> list:
         """
         Retrieve a list of reports from the GDELT API based on specified criteria.
 
@@ -35,6 +48,7 @@ class GDELTExtractor:
 
         Raises:
             HTTPError: If the HTTP request returns a status code other than 200.
+            ValueError: If the request contains invalid arguments.
         """
         base_url = "https://api.gdeltproject.org/api/v2/doc/doc"
         dt_start_date = datetime.strptime(start_date, "%Y-%m-%d")
