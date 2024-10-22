@@ -55,8 +55,7 @@ class GDELTExtractor:
         }
 
         response = requests.get(base_url, params=params)
-        if response.status_code != 200:
-            raise HTTPError(f"HTTP error: {response.status_code}")
+        response.raise_for_status()
 
         response_data = response.json()["articles"]
         return response_data
