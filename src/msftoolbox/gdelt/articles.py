@@ -61,7 +61,10 @@ class GDELTExtractor:
         response_data = response.json()["articles"]
         return response_data
 
-    def get_report(self, report_url: str) -> dict:
+    def get_report(
+        self,
+        report_url: str
+        ) -> dict:
         """Get a report based on the report url.
 
         Args:
@@ -78,6 +81,6 @@ class GDELTExtractor:
                 return {"text": page.text}
             else:
                 return {"text": None}
-        except Exception as e:
-            print(f"Error downloading article from {report_url}: {str(e)}")
+        except Exception as ex:
+            print(f"Error downloading article from {report_url}: {str(ex)}")
             return {"text": None}
