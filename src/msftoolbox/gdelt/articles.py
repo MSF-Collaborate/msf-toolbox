@@ -29,7 +29,7 @@ class GDELTExtractor:
         start_date: str,
         end_date: str,
         query_value: str,
-        country_filter: list = None
+        country_filter: str = None
         ) -> list:
         """
         Retrieve a list of reports from the GDELT API based on specified criteria.
@@ -38,8 +38,7 @@ class GDELTExtractor:
             start_date (str): The start date for the reports in YYYY-MM-DD format.
             end_date (str): The end date for the reports in YYYY-MM-DD format.
             query_value (str): The search query value.
-            country_filter (list, optional): A list of countries to filter the reports. Defaults to None.
-            response_format (str, optional): The format of the response, default is "JSON".
+            country_filter (str, optional): A country to filter the reports. Defaults to None.
 
         Returns:
             list: A list of articles from the response data.
@@ -57,8 +56,11 @@ class GDELTExtractor:
         if dt_end_date - dt_start_date <= timedelta(0):
             raise ValueError("End date must be after start date")
 
+        query_value = f"{query_value} AND {country_filter}" \
+            if country_filter is not None else query_value
+
         params = {
-            "query": f"{query_value} AND {country_filter}",
+            "query": query_value,
             "mode": "ArtList",
             "startdatetime": api_formatted_start_date,
             "enddatetime": api_formatted_end_date,
@@ -69,8 +71,11 @@ class GDELTExtractor:
         response = requests.get(base_url, params=params)
         response.raise_for_status()
 
-        response_data = response.json()["articles"]
-        return response_data
+        response_data = response.json()
+        response_articles = response_data.get(
+            "articles", {"message": "No articles returned."}
+            )
+        return response_articles
 
     def get_report(
         self,
