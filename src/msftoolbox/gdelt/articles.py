@@ -29,8 +29,7 @@ class GDELTExtractor:
         start_date: str,
         end_date: str,
         query_value: str,
-        country_filter: list = None,
-        mode: str = "ArtList"
+        country_filter: list = None
         ) -> list:
         """
         Retrieve a list of reports from the GDELT API based on specified criteria.
@@ -41,7 +40,6 @@ class GDELTExtractor:
             query_value (str): The search query value.
             country_filter (list, optional): A list of countries to filter the reports. Defaults to None.
             response_format (str, optional): The format of the response, default is "JSON".
-            mode (str, optional): The mode for the API request, default is "ArtList".
 
         Returns:
             list: A list of articles from the response data.
@@ -61,7 +59,7 @@ class GDELTExtractor:
 
         params = {
             "query": f"{query_value} AND {country_filter}",
-            "mode": mode,
+            "mode": "ArtList",
             "startdatetime": api_formatted_start_date,
             "enddatetime": api_formatted_end_date,
             "format": "JSON",
