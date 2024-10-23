@@ -17,7 +17,7 @@
 Initialize the `ACLEDExtractor` with your API key and email.
 
 ```python
-from acled_extractor import ACLEDExtractor
+from msftoolbox.acled.extract import ACLEDExtractor
 
 acled_extractor = ACLEDExtractor(
     api_key="your_api_key",
