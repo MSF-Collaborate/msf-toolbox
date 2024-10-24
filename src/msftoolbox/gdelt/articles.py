@@ -73,7 +73,6 @@ class GDELTExtractor:
                 temp_filter = f"({temp_filter})" if len(optional_filter) > 1 else temp_filter
                 query_value = f"{query_value} AND {temp_filter}"
         
-        print(query_value)
         params = {
             "query": query_value,
             "mode": "ArtList",
