@@ -8,7 +8,7 @@
 
 - **Report Querying**: Retrieve a list of news reports based on specified criteria such as date range, topic, and country.
 - **Content Retrieval**: Download and parse the full content of news articles.
-- **Error Handling**: Manage errors during article download and translation processes.
+- **Error Handling**: Manage errors during article download.
 
 ## Usage
 
@@ -19,8 +19,7 @@ from msftoolbox.gdelt.articles import GDELTExtractor
 
 client = GDELTExtractor(
     sort="HybridRel",
-    limit=50,
-    mode="ArtList"
+    limit=10
 )
 ```
 
@@ -31,12 +30,14 @@ client = GDELTExtractor(
 Retrieve a list of news reports based on the specified parameters.
 
 ```python
-reports = client.list_reports(
+report_list = gdelt_client.list_reports(
     start_date='2024-10-07',
     end_date='2024-10-14',
-    query_value="Refugees",
-    country_filter="Turkey"
-)
+    query_value="healthcare",
+    source_languages_filter=["english"],
+    source_countries_filter=["bangladesh", "india"],
+    source_domains_filter=None
+    )
 ```
 
 #### Get Report Content
@@ -60,13 +61,18 @@ report_content = client.get_report(
 client = GDELTExtractor()
 
 # Define parameters
-start_date = '2024-10-07'
+start_date = '2024-09-07'
 end_date = '2024-10-14'
 topic = "Refugees"
-country = "Turkey"
+source_countries_filter = ["Turkey"]
 
 # List reports
-reports = client.list_reports(start_date, end_date, topic, country)
+reports = client.list_reports(
+    start_date, 
+    end_date, 
+    topic, 
+    source_countries_filter=source_countries_filter
+    )
 
 # Process each report
 for report in reports:
@@ -77,6 +83,7 @@ for report in reports:
 ```
 ### Error Handling
 
+- **Listing Errors**: If listing articles fails, the method returns a dictionary with the message text, exposing errors or lack of articles.
 - **Download Errors**: If downloading an article fails, the method returns `None` for the text.
 
 This class provides a robust framework for extracting and processing news data from the GDELT Project, with built-in error handling to ensure smooth operation.
