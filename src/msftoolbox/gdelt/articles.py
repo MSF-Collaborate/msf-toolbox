@@ -80,7 +80,9 @@ class GDELTExtractor:
             "startdatetime": api_formatted_start_date,
             "enddatetime": api_formatted_end_date,
             "format": "JSON",
-            "trans": "googtrans"
+            "trans": "googtrans",
+            "sort": self.sort,
+            "maxrecords": self.limit
         }
 
         response = requests.get(base_url, params=params)
