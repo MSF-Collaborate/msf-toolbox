@@ -87,14 +87,11 @@ class GDELTExtractor:
         response.raise_for_status()
 
         try:
-            response_data = response.json()
+            response_data = response.json()["articles"]
         except Exception:
             response_data = {"message": f"No articles returned. Response text: {response.text}"}
 
-        response_articles = response_data.get(
-            "articles", response_data
-            )
-        return response_articles
+        return response_data
 
     def get_report(
         self,
