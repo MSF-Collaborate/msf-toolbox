@@ -29,7 +29,9 @@ class GDELTExtractor:
         start_date: str,
         end_date: str,
         query_value: str,
-        country_filter: str = None
+        source_countries_filter: list = None,
+        source_languages_filter: list = None,
+        source_domains_filter: list = None
         ) -> list:
         """
         Retrieve a list of reports from the GDELT API based on specified criteria.
@@ -38,7 +40,9 @@ class GDELTExtractor:
             start_date (str): The start date for the reports in YYYY-MM-DD format.
             end_date (str): The end date for the reports in YYYY-MM-DD format.
             query_value (str): The search query value.
-            country_filter (str, optional): A country to filter the reports. Defaults to None.
+            source_countries_filter (list, optional): A list of source countries to filter the reports. Defaults to None.
+            source_languages_filter (list, optional): A list of source languages to filter the reports. Defaults to None.
+            source_domains_filter (list, optional): A list of source domains to filter the reports. Defaults to None.
 
         Returns:
             list: A list of articles from the response data.
@@ -56,9 +60,16 @@ class GDELTExtractor:
         if dt_end_date - dt_start_date <= timedelta(0):
             raise ValueError("End date must be after start date")
 
-        query_value = f"{query_value} AND {country_filter}" \
-            if country_filter is not None else query_value
-
+        for optional_filter in [
+            source_countries_filter,
+            source_languages_filter,
+            source_domains_filter
+            ]:
+            if optional_filter is not None:
+                temp_filter = " OR ".join(f"sourcecountry:{value}" for value in optional_filter)
+                query_value = f"{query_value} AND ({temp_filter})"
+        
+        print(query_value)
         params = {
             "query": query_value,
             "mode": "ArtList",
