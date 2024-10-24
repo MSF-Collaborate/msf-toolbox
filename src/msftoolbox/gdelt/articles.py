@@ -29,8 +29,8 @@ class GDELTExtractor:
         start_date: str,
         end_date: str,
         query_value: str,
-        source_countries_filter: list = None,
         source_languages_filter: list = None,
+        source_countries_filter: list = None,
         source_domains_filter: list = None
         ) -> list:
         """
@@ -41,7 +41,7 @@ class GDELTExtractor:
             end_date (str): The end date for the reports in YYYY-MM-DD format.
             query_value (str): The search query value.
             source_countries_filter (list, optional): A list of source countries to filter the reports. Defaults to None.
-            source_languages_filter (list, optional): A list of source languages to filter the reports. Defaults to None.
+            source_languages_filter (list, optional): A list of source languages to filter the reports. Defaults to ["english"].
             source_domains_filter (list, optional): A list of source domains to filter the reports. Defaults to None.
 
         Returns:
@@ -57,17 +57,21 @@ class GDELTExtractor:
         api_formatted_start_date = datetime.strftime(dt_start_date, "%Y%m%d%H%M%S")
         api_formatted_end_date = datetime.strftime(dt_end_date, "%Y%m%d%H%M%S")
 
+        if source_languages_filter is None:
+            source_languages_filter = ["english"]
+
         if dt_end_date - dt_start_date <= timedelta(0):
             raise ValueError("End date must be after start date")
 
-        for optional_filter in [
-            source_countries_filter,
-            source_languages_filter,
-            source_domains_filter
+        for gdelt_filter, optional_filter in [
+            ("sourcecountry", source_countries_filter),
+            ("sourcelang", source_languages_filter),
+            ("domain", source_domains_filter)
             ]:
             if optional_filter is not None:
-                temp_filter = " OR ".join(f"sourcecountry:{value}" for value in optional_filter)
-                query_value = f"{query_value} AND ({temp_filter})"
+                temp_filter = " OR ".join(f"{gdelt_filter}:{value}" for value in optional_filter)
+                temp_filter = f"({temp_filter})" if len(optional_filter) > 1 else temp_filter
+                query_value = f"{query_value} AND {temp_filter}"
         
         print(query_value)
         params = {
@@ -82,9 +86,13 @@ class GDELTExtractor:
         response = requests.get(base_url, params=params)
         response.raise_for_status()
 
-        response_data = response.json()
+        try:
+            response_data = response.json()
+        except Exception:
+            response_data = {"message": f"No articles returned. Response text: {response.text}"}
+
         response_articles = response_data.get(
-            "articles", {"message": "No articles returned."}
+            "articles", response_data
             )
         return response_articles
 
