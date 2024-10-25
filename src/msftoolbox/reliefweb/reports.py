@@ -77,7 +77,8 @@ class ReliefWebExtractor():
         query_value:str,
         query_fields:list = None,
         query_operator:str = "OR",
-        country_iso3_filter:list = None,
+        source_countries_filter:list = None,
+        source_languages_filter:list = None,
         structured_format:bool = True
         ) -> list:
         """List all reports matching a query with optional filters.
@@ -89,8 +90,9 @@ class ReliefWebExtractor():
             query_fields (list): The fields to search in. Allowed values can be found
                 at: https://apidoc.reliefweb.int/fields-tables. E.g ["body", "title"]
             query_operator (str): The operator ('OR', 'AND') determining how to treat queries with multiple search keywords.
-            country_iso3_filter (list): A list of ISO3 country codes for filtering. ISO3 codes can be
+            source_countries_filter (list): A list of ISO3 country codes for filtering. ISO3 codes can be
                 found at: https://www.iban.com/country-codes.
+            source_languages_filter (list): A list of language codes from ("ot", "ru", "ar", "es", "fr", "en"). Defaults to en.
             structured_format (bool): A predefined structure format that is either true = not nested;
                 false = nested (default = true)
 
@@ -100,7 +102,6 @@ class ReliefWebExtractor():
             A list of dictionaries, each representing a report, with the following keys:
                 - "id": The unique identifier of the report.
                 - "title": The title of the report.
-                - "title_english": The English title of the report.
                 - "source_name": A string of source names joined by " / ".
                 - "language": A string of language names joined by " / ".
                 - "date": The original date of the report.
@@ -115,7 +116,7 @@ class ReliefWebExtractor():
         """
         if query_fields is None:
             query_fields = ["body", "title"]
-
+        
         if query_operator not in ["OR", "AND"]:
             raise ValueError( f"Value {query_operator} not allowed for query_operator. Allowed values are: OR, AND")
 
@@ -135,14 +136,26 @@ class ReliefWebExtractor():
             raise ValueError(f"Invalid date: {start_date} or {end_date}. \
                 Dates must be in YYYY-MM-DD format.")
 
-        if country_iso3_filter is not None:
+        if source_countries_filter is None:
+            source_countries_filter = ["en"]
+
+        all_filters["conditions"] .append(
+                {
+                "field": "country.iso3",
+                "value": source_countries_filter,
+                "operator": "OR"
+                }
+            )
+
+        if source_languages_filter is not None:
             all_filters["conditions"] .append(
                     {
-                    "field": "country.iso3",
-                    "value": country_iso3_filter,
+                    "field": "language.code",
+                    "value": source_languages_filter,
                     "operator": "OR"
                     }
                 )
+
         base_url = f"https://api.reliefweb.int/v1/reports?appname={self.app_name}"
 
         # set the request headers and body
@@ -160,7 +173,7 @@ class ReliefWebExtractor():
                 "operator": query_operator
             },
             "filter": all_filters,
-            "fields":{"include":["source.name", "date", "language.name"]}
+            "fields":{"include":["source.name", "date", "language.name", "country.iso3"]}
         }
 
         # Send request to URL
@@ -184,7 +197,6 @@ class ReliefWebExtractor():
                 {
                     "id": record["id"],
                     "title": record["fields"]["title"],
-                    "title_english": record["fields"]["title"],
                     "source_name": " / ".join([source['name'] for source in record["fields"]["source"]]),
                     "language": " / ".join([language['name'] for language in record["fields"]["language"]]),
                     "date": record["fields"]["date"]["original"],
