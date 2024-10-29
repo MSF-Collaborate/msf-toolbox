@@ -52,7 +52,7 @@ def test_list_reports(mock_post):
                 "language": [{"name": "English"}],
                 "date": {"original": "2023-10-01"},
             },
-            "href": "http://example.com/report/1"
+            "href": "https://example.com/report/1"
         }]
     }
     mock_post.return_value = mock_response
@@ -79,7 +79,7 @@ def test_get_report(mock_get):
     mock_get.return_value = mock_response
 
     extractor = ReliefWebExtractor()
-    report = extractor.get_report("http://example.com/report/1")
+    report = extractor.get_report("https://example.com/report/1")
     assert report["fields"]["title"] == "Sample Report"
 
 # Test HTTPError for list_reports
@@ -104,4 +104,4 @@ def test_get_report_http_error(mock_get):
 
     extractor = ReliefWebExtractor()
     with pytest.raises(requests.HTTPError):
-        extractor.get_report("http://example.com/report/1")
+        extractor.get_report("https://example.com/report/1")
