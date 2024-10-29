@@ -134,26 +134,26 @@ class ReliefWebExtractor():
         else:
             raise ValueError(f"Invalid date: {start_date} or {end_date}. \
                 Dates must be in YYYY-MM-DD format.")
-
-        if source_countries_filter is None:
-            source_countries_filter = ["en"]
-
-        all_filters["conditions"] .append(
-                {
-                "field": "country.iso3",
-                "value": source_countries_filter,
-                "operator": "OR"
-                }
-            )
-
-        if source_languages_filter is not None:
-            all_filters["conditions"] .append(
+        
+        if source_countries_filter:
+            all_filters["conditions"].append(
                     {
-                    "field": "language.code",
-                    "value": source_languages_filter,
+                    "field": "country.iso3",
+                    "value": source_countries_filter,
                     "operator": "OR"
                     }
                 )
+
+        if source_languages_filter is None:
+            source_languages_filter = ["en"]
+
+        all_filters["conditions"] .append(
+                {
+                "field": "language.code",
+                "value": source_languages_filter,
+                "operator": "OR"
+                }
+            )
 
         base_url = f"https://api.reliefweb.int/v1/reports?appname={self.app_name}"
 
