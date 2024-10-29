@@ -22,7 +22,7 @@ def test_list_reports(mock_get):
     mock_response.status_code = 200
     mock_response.json.return_value = {
         "articles": [
-            {"title": "Sample Article", "url": "http://example.com/article/1"}
+            {"title": "Sample Article", "url": "https://example.com/article/1"}
         ]
     }
     mock_get.return_value = mock_response
@@ -54,7 +54,7 @@ def test_get_report(mock_article):
     mock_article_instance.text = "Full article text"
 
     extractor = GDELTExtractor()
-    report = extractor.get_report("http://example.com/article/1")
+    report = extractor.get_report("https://example.com/article/1")
     assert report["text"] == "Full article text"
 
 # Test error handling in get_report
@@ -64,5 +64,5 @@ def test_get_report_error(mock_article):
     mock_article_instance.download.side_effect = Exception("Download error")
 
     extractor = GDELTExtractor()
-    report = extractor.get_report("http://example.com/article/1")
+    report = extractor.get_report("https://example.com/article/1")
     assert report["text"] is None
