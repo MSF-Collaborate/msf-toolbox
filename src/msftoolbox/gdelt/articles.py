@@ -77,7 +77,7 @@ class GDELTExtractor:
                 temp_filter = " OR ".join(f"{gdelt_filter}:{value}" for value in optional_filter)
                 temp_filter = f"({temp_filter})" if len(optional_filter) > 1 else temp_filter
                 query_value = f"{query_value} AND {temp_filter}"
-        
+
         # Create the payload
         params = {
             "query": query_value,
