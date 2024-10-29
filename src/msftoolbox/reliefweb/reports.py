@@ -1,4 +1,3 @@
-from unittest.mock import NonCallableMagicMock
 import requests
 from datetime import datetime
 
