@@ -40,7 +40,8 @@ class GDELTExtractor:
             start_date (str): The start date for the reports in YYYY-MM-DD format.
             end_date (str): The end date for the reports in YYYY-MM-DD format.
             query_value (str): The search query value.
-            source_countries_filter (list, optional): A list of source countries to filter the reports. Defaults to None.
+            source_countries_filter (list, optional): A list of source countries to filter the reports. This is different
+                than filtering the content. To filter the content, use a keyword in query_value. Defaults to None.
             source_languages_filter (list, optional): A list of source languages to filter the reports. Defaults to ["english"].
             source_domains_filter (list, optional): A list of source domains to filter the reports. Defaults to None.
 
@@ -51,18 +52,22 @@ class GDELTExtractor:
             HTTPError: If the HTTP request returns a status code other than 200.
             ValueError: If the request contains invalid arguments.
         """
+        # Format dates and store url
         base_url = "https://api.gdeltproject.org/api/v2/doc/doc"
         dt_start_date = datetime.strptime(start_date, "%Y-%m-%d")
         dt_end_date = datetime.strptime(end_date, "%Y-%m-%d")
         api_formatted_start_date = datetime.strftime(dt_start_date, "%Y%m%d%H%M%S")
         api_formatted_end_date = datetime.strftime(dt_end_date, "%Y%m%d%H%M%S")
 
+        # Apply default source language
         if source_languages_filter is None:
             source_languages_filter = ["english"]
 
+        # Check validity of start and end date
         if dt_end_date - dt_start_date <= timedelta(0):
             raise ValueError("End date must be after start date")
 
+        # Add the filters to the query value
         for gdelt_filter, optional_filter in [
             ("sourcecountry", source_countries_filter),
             ("sourcelang", source_languages_filter),
@@ -73,6 +78,7 @@ class GDELTExtractor:
                 temp_filter = f"({temp_filter})" if len(optional_filter) > 1 else temp_filter
                 query_value = f"{query_value} AND {temp_filter}"
         
+        # Create the payload
         params = {
             "query": query_value,
             "mode": "ArtList",
@@ -84,6 +90,7 @@ class GDELTExtractor:
             "maxrecords": self.limit
         }
 
+        # Perform get request and process data. Assign message for failure.
         response = requests.get(base_url, params=params)
         response.raise_for_status()
 
