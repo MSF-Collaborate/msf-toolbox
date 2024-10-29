@@ -77,7 +77,7 @@ class ReliefWebExtractor():
         query_fields:list = None,
         query_operator:str = "OR",
         countries_filter:list = None,
-        source_languages_filter:list = None,
+        source_languages_filter:list = "DEFAULT",
         structured_format:bool = True
         ) -> list:
         """List all reports matching a query with optional filters.
@@ -86,7 +86,7 @@ class ReliefWebExtractor():
             start_date (str): The start date in YYYY-MM-DD format.
             end_date (str): The end date in YYYY-MM-DD format.
             query_value (str): The value to search for. This is equivalent to what would be entered in the Relief Web search bar.
-            query_fields (list): The fields to search in. Allowed values can be found
+            query_fields (list): The fields to search in. Defaults to ["body", "title"]. Allowed values can be found
                 at: https://apidoc.reliefweb.int/fields-tables. E.g ["body", "title"]
             query_operator (str): The operator ('OR', 'AND') determining how to treat queries with multiple search keywords.
             countries_filter (list): A list of ISO3 country codes for filtering the content. ISO3 codes can be
@@ -107,7 +107,6 @@ class ReliefWebExtractor():
                 - "url": The URL to access the report.
             If False:
             A list of dictionaries with the API format
-            
 
         Raises:
             ValueError: If invalid values are provided for query_operator or date format.
@@ -115,7 +114,7 @@ class ReliefWebExtractor():
         """
         if query_fields is None:
             query_fields = ["body", "title"]
-        
+
         if query_operator not in ["OR", "AND"]:
             raise ValueError( f"Value {query_operator} not allowed for query_operator. Allowed values are: OR, AND")
 
@@ -134,7 +133,7 @@ class ReliefWebExtractor():
         else:
             raise ValueError(f"Invalid date: {start_date} or {end_date}. \
                 Dates must be in YYYY-MM-DD format.")
-        
+
         if countries_filter:
             all_filters["conditions"].append(
                     {
@@ -144,16 +143,19 @@ class ReliefWebExtractor():
                     }
                 )
 
-        if source_languages_filter is None:
+        # If the source languages filter is default, default to english
+        if source_languages_filter == "DEFAULT":
             source_languages_filter = ["en"]
 
-        all_filters["conditions"] .append(
-                {
-                "field": "language.code",
-                "value": source_languages_filter,
-                "operator": "OR"
-                }
-            )
+        # Add the filters on language
+        if source_languages_filter is not None:
+            all_filters["conditions"] .append(
+                    {
+                    "field": "language.code",
+                    "value": source_languages_filter,
+                    "operator": "OR"
+                    }
+                )
 
         base_url = f"https://api.reliefweb.int/v1/reports?appname={self.app_name}"
 
