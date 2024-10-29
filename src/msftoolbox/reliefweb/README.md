@@ -7,7 +7,7 @@
 ## Features
 
 - **Report Querying**: Retrieve a list of reports based on specified criteria such as date range, keywords, and country.
-- **Content Retrieval**: Download and parse the full content of reports.
+- **Content Retrieval**: Download the full content of reports.
 - **Error Handling**: Manage errors gracefully during data retrieval and parsing.
 
 ## Usage
@@ -36,7 +36,7 @@ reports = client.list_reports(
     start_date='2024-01-01',
     end_date='2024-10-14',
     query_value='refugees',
-    country_iso3_filter=['AFG']
+    countries_filter=['AFG']
 )
 ```
 
@@ -51,19 +51,10 @@ report_data = client.get_report(
 
 ```
 
-
-### Parse Report Data
-Extract specific fields from the report data.
-
-``` python
-
-parsed_data = client.parse_report_data(report_data)
-
-```
-
 ### Example Workflow
 List Reports: Fetch reports based on criteria.
-Get and Parse Each Report: Retrieve and process the report data.
+Get Reports: Retrieve and process the report data.
+
 ``` python
 # Initialize the client
 client = ReliefWebExtractor()
@@ -72,10 +63,15 @@ client = ReliefWebExtractor()
 start_date = '2024-01-01'
 end_date = '2024-10-14'
 query_value = 'refugees'
-country_iso3_filter = ['AFG']
+countries_filter = ['AFG']
 
 # List reports
-reports = client.list_reports(start_date, end_date, query_value, country_iso3_filter=country_iso3_filter)
+reports = client.list_reports(
+    start_date, 
+    end_date, 
+    query_value, 
+    countries_filter=countries_filter
+    )
 
 # Process each report
 for report in reports:
