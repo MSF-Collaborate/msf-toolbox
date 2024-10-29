@@ -36,7 +36,7 @@ reports = client.list_reports(
     start_date='2024-01-01',
     end_date='2024-10-14',
     query_value='refugees',
-    source_countries_filter=['AFG']
+    countries_filter=['AFG']
 )
 ```
 
@@ -63,14 +63,14 @@ client = ReliefWebExtractor()
 start_date = '2024-01-01'
 end_date = '2024-10-14'
 query_value = 'refugees'
-source_countries_filter = ['AFG']
+countries_filter = ['AFG']
 
 # List reports
 reports = client.list_reports(
     start_date, 
     end_date, 
     query_value, 
-    source_countries_filter=source_countries_filter
+    countries_filter=countries_filter
     )
 
 # Process each report

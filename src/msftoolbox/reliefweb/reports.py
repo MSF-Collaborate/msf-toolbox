@@ -76,7 +76,7 @@ class ReliefWebExtractor():
         query_value:str,
         query_fields:list = None,
         query_operator:str = "OR",
-        source_countries_filter:list = None,
+        countries_filter:list = None,
         source_languages_filter:list = None,
         structured_format:bool = True
         ) -> list:
@@ -89,7 +89,7 @@ class ReliefWebExtractor():
             query_fields (list): The fields to search in. Allowed values can be found
                 at: https://apidoc.reliefweb.int/fields-tables. E.g ["body", "title"]
             query_operator (str): The operator ('OR', 'AND') determining how to treat queries with multiple search keywords.
-            source_countries_filter (list): A list of ISO3 country codes for filtering. ISO3 codes can be
+            countries_filter (list): A list of ISO3 country codes for filtering the content. ISO3 codes can be
                 found at: https://www.iban.com/country-codes.
             source_languages_filter (list): A list of language codes from ("ot", "ru", "ar", "es", "fr", "en"). Defaults to en.
             structured_format (bool): A predefined structure format that is either true = not nested;
@@ -135,11 +135,11 @@ class ReliefWebExtractor():
             raise ValueError(f"Invalid date: {start_date} or {end_date}. \
                 Dates must be in YYYY-MM-DD format.")
         
-        if source_countries_filter:
+        if countries_filter:
             all_filters["conditions"].append(
                     {
                     "field": "country.iso3",
-                    "value": source_countries_filter,
+                    "value": countries_filter,
                     "operator": "OR"
                     }
                 )
