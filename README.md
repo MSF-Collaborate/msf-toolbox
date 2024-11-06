@@ -25,6 +25,7 @@ The toolbox is designed to simplify the interaction with multiple services, prov
     - [PowerBI](https://www.microsoft.com/nl-nl/power-platform/products/power-bi)
     - [Reliefweb](https://reliefweb.int/)
     - [GDELT](https://www.gdeltproject.org/)
+    - [MODIS](https://modis.ornl.gov/data/modis_webservice.html)
 
 - Streamlines authentication and data access processes to these tools
 - Streamlines API integration of these tools
