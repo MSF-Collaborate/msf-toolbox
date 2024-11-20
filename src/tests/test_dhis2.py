@@ -91,7 +91,7 @@ def test_get_all_org_units():
     metadata = Dhis2MetadataClient(username='user', password='pass', server_url='http://example.com')
     metadata.get_response = MagicMock(return_value={'organisationUnits': [{'id': 'abc', 'name': 'Org Unit 1'}]})
 
-    result = metadata.get_all_org_units(userOnly=True, paging=False)
+    result = metadata.get_organisation_units(userOnly=True, paging=False)
     metadata.get_response.assert_called_with('http://example.com/api/organisationUnits', params={'userOnly': True, 'paging': False})
     assert result == [{'id': 'abc', 'name': 'Org Unit 1'}]
 
