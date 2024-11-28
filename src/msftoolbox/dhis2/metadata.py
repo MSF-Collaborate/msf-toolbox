@@ -76,7 +76,7 @@ class Dhis2MetadataClient:
 
         return response.json()
 
-    def get_all_org_units(self, **kwargs):
+    def get_organisation_units(self, **kwargs):
         """
         Retrieves all organization units from DHIS2 with optional query parameters.
 
@@ -105,6 +105,40 @@ class Dhis2MetadataClient:
         params = {k: v for k, v in kwargs.items() if v is not None}
         data = self.get_response(url, params=params)
         return data['organisationUnits']
+
+    def add_organisation_unit_name_path(
+        self,
+        organisation_units
+        ):
+        """
+        Converts the org unit id path to a path of names based on the `path` field in the organisation unit
+
+        Args:
+            organisation_units (list): The list of org unit dictionaries from the get_organisation_units method.
+
+        Returns:
+            list: The list of dictionaries with an additional key organisation_unit_name_path.
+        """
+        all_organisation_units = self.get_organisation_units(
+            paging=False,
+            fields="id,name"
+            )
+
+        mapper = {
+            record["id"]: record["name"] for record in all_organisation_units
+        }
+
+        for record in organisation_units:
+            temp_parts = record["path"].strip('/').split('/')
+
+            # Replace each part with its corresponding name from the mapping
+            replaced_parts = [mapper.get(part, part) for part in temp_parts]
+
+            # Join the parts back into a path
+            record["organisation_unit_name_path"] = ' > '.join(replaced_parts)
+
+        return organisation_units
+
 
     def get_org_unit_children(self, uid):
         """
