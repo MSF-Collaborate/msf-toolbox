@@ -25,6 +25,7 @@ The toolbox is designed to simplify the interaction with multiple services, prov
     - [PowerBI](https://www.microsoft.com/nl-nl/power-platform/products/power-bi) -> [Documentation](./src/msftoolbox/powerbi/README.md)
     - [Reliefweb](https://reliefweb.int/) -> [Documentation](./src/msftoolbox/reliefweb/README.md)
     - [GDELT](https://www.gdeltproject.org/) -> [Documentation](./src/msftoolbox/gdelt/README.md)
+    - [MODIS](https://modis.ornl.gov/data/modis_webservice.html)
     - [ACLED](https://acleddata.com/) -> [Documentation](./src/msftoolbox/acled/README.md)
 - Streamlines authentication and data access processes to these tools
 - Streamlines API integration of these tools
