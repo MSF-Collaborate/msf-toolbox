@@ -20,11 +20,11 @@ The toolbox is designed to simplify the interaction with multiple services, prov
 ### What It Does
 - Provides easy-to-use and well documented classes for specific tools that are used within the context of MSF:
     - [DHIS2](https://dhis2.org/)
-    - [Sharepoint](https://www.microsoft.com/nl-nl/microsoft-365/sharepoint/collaboration) -> [Documentation](./src/msftoolbox/sharepoint/README.md)
+    - [Sharepoint](https://www.microsoft.com/nl-nl/microsoft-365/sharepoint/collaboration)
     - [Azure](https://azure.microsoft.com/)
-    - [PowerBI](https://www.microsoft.com/nl-nl/power-platform/products/power-bi) -> [Documentation](./src/msftoolbox/powerbi/README.md)
-    - [Reliefweb](https://reliefweb.int/) -> [Documentation](./src/msftoolbox/reliefweb/README.md)
-    - [GDELT](https://www.gdeltproject.org/) -> [Documentation](./src/msftoolbox/gdelt/README.md)
+    - [PowerBI](https://www.microsoft.com/nl-nl/power-platform/products/power-bi)
+    - [Reliefweb](https://reliefweb.int/)
+    - [GDELT](https://www.gdeltproject.org/)
     - [MODIS](https://modis.ornl.gov/data/modis_webservice.html)
 - Streamlines authentication and data access processes to these tools
 - Streamlines API integration of these tools
