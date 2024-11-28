@@ -2,7 +2,7 @@ import pytest
 import requests
 from unittest.mock import patch, Mock
 
-from msftoolbox.modis.modis_client import ModisClient
+from msftoolbox.modis.data import ModisClient
 
 
 @pytest.fixture
