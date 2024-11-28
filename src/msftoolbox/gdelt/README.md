@@ -1,8 +1,8 @@
-# GDELTExtractor
+# GDELTClient
 
 ## Overview
 
-`GDELTExtractor` is a Python class designed to interact with the GDELT Project API. It provides methods for querying news reports, retrieving report content, and handling potential errors gracefully.
+`GDELTClient` is a Python class designed to interact with the GDELT Project API. It provides methods for querying news reports, retrieving report content, and handling potential errors gracefully.
 
 ## Features
 
@@ -15,9 +15,9 @@
 ### Initialization
 
 ```python
-from msftoolbox.gdelt.articles import GDELTExtractor
+from msftoolbox.gdelt.data import GDELTClient
 
-client = GDELTExtractor(
+client = GDELTClient(
     sort="HybridRel",
     limit=10
 )
@@ -58,7 +58,7 @@ report_content = client.get_report(
 
 ```python
 # Initialize the client
-client = GDELTExtractor()
+client = GDELTClient()
 
 # Define parameters
 start_date = '2024-09-07'

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import requests
 import newspaper
 
-class GDELTExtractor:
+class GDELTClient:
     """
     A class to interact with the GDELT API.
 
