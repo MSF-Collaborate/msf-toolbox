@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime
 
-class ACLEDExtractor:
+class ACLEDClient:
     """A class to interact with the ACLED API, allowing data extraction and filtering."""
 
     BASE_URL = "https://api.acleddata.com"
