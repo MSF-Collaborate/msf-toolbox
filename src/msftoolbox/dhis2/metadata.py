@@ -129,7 +129,6 @@ class Dhis2MetadataClient:
         }
 
         for record in organisation_units:
-            record["path"] = record["path"]
             temp_parts = record["path"].strip('/').split('/')
 
             # Replace each part with its corresponding name from the mapping
