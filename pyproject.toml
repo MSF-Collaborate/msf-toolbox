@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "msftoolbox"
 version = "0.2.0"
-description = "The backend to perform OCR on Doctors without Borders tally sheets."
+description = "A python toolbox containing wrappers facilitating common operations."
 readme = "README.md"
 requires-python = ">=3.10"
 
