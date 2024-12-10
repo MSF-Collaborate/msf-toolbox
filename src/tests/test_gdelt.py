@@ -1,17 +1,17 @@
 import pytest
 from unittest.mock import patch, Mock
 import requests
-from msftoolbox.gdelt.articles import GDELTExtractor  # Replace with the actual module name
+from msftoolbox.gdelt.data import GDELTClient  # Replace with the actual module name
 
-# Test GDELTExtractor initialization
+# Test GDELTClient initialization
 def test_initialization():
-    extractor = GDELTExtractor()
+    extractor = GDELTClient()
     assert extractor.sort == "HybridRel"
     assert extractor.limit == 50
 
 # Test list_reports with invalid date range
 def test_list_reports_invalid_date():
-    extractor = GDELTExtractor()
+    extractor = GDELTClient()
     with pytest.raises(ValueError):
         extractor.list_reports("2023-10-02", "2023-10-01", "query")
 
@@ -27,7 +27,7 @@ def test_list_reports(mock_get):
     }
     mock_get.return_value = mock_response
 
-    extractor = GDELTExtractor()
+    extractor = GDELTClient()
     articles = extractor.list_reports("2023-10-01", "2023-10-02", "query")
     assert len(articles) == 1
     assert articles[0]["title"] == "Sample Article"
@@ -41,7 +41,7 @@ def test_list_reports_http_error(mock_get):
     mock_response.raise_for_status.side_effect = requests.HTTPError("Not Found")
     mock_get.return_value = mock_response
 
-    extractor = GDELTExtractor()
+    extractor = GDELTClient()
     with pytest.raises(requests.HTTPError):
         extractor.list_reports("2023-10-01", "2023-10-02", "query")
 
@@ -53,7 +53,7 @@ def test_get_report(mock_article):
     mock_article_instance.parse = Mock()
     mock_article_instance.text = "Full article text"
 
-    extractor = GDELTExtractor()
+    extractor = GDELTClient()
     report = extractor.get_report("https://example.com/article/1")
     assert report["text"] == "Full article text"
 
@@ -63,6 +63,6 @@ def test_get_report_error(mock_article):
     mock_article_instance = mock_article.return_value
     mock_article_instance.download.side_effect = Exception("Download error")
 
-    extractor = GDELTExtractor()
+    extractor = GDELTClient()
     report = extractor.get_report("https://example.com/article/1")
     assert report["text"] is None

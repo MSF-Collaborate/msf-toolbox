@@ -18,7 +18,7 @@
 To connect to the Power BI REST API, you need to have a Microsoft account that has access to Power BI and an Azure AD application. With all that, you can connect to the Power BI REST API using the following function:
 
 ```python
-from power_bi_client import PowerBIClient
+from msftoolbox.powerbi.workspace import PowerBIClient
 
 client = PowerBIClient(
     client_id="your-client-id",

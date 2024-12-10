@@ -1,8 +1,8 @@
-# SharePointClient
+# SharePointFileClient
 
 ## Overview
 
-`SharePointClient` is a Python class designed to interact with the Office365 SharePoint API. It provides methods for authenticating, listing files and folders, downloading, uploading, moving, renaming, and recycling files, as well as creating folders.
+`SharePointFileClient` is a Python class designed to interact with the Office365 SharePoint API. It provides methods for authenticating, listing files and folders, downloading, uploading, moving, renaming, and recycling files, as well as creating folders.
 
 ## Features
 
@@ -16,9 +16,9 @@
 
 #### Using Client ID and Secret 
 ```python
-from sharepoint_client import SharePointClient
+from msftoolbox.sharepoint.files import SharePointFileClient
 
-client = SharePointClient(
+client = SharePointFileClient(
     site_url="https://your-site-url",
     client_id="your-client-id",
     client_secret="your-client-secret"
@@ -29,9 +29,9 @@ client = SharePointClient(
 Fails for MFA enabled accounts.
 
 ```python
-from sharepoint_client import SharePointClient
+from sharepoint_client import SharePointFileClient
 
-client = SharePointClient(
+client = SharePointFileClient(
     site_url="https://your-site-url", 
     username="your-username", 
     password="your-password"

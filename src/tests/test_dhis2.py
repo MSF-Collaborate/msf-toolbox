@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from msftoolbox.dhis2.metadata import Dhis2MetadataClient
-from msftoolbox.dhis2.data_values import Dhis2DataValuesClient
+from msftoolbox.dhis2.data import Dhis2DataValuesClient
 import requests
 import json
 

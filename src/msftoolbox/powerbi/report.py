@@ -6,7 +6,7 @@ import shutil
 log = logging.getLogger()
 
 
-class ReportExtractorClient:
+class ReportClient:
     """
     A class to extract information from Power BI report files.
 

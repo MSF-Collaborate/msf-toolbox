@@ -2,7 +2,7 @@ import pytest
 import requests
 from unittest.mock import patch, Mock
 
-from msftoolbox.modis.modis_client import ModisClient
+from msftoolbox.modis.data import ModisClient
 
 
 @pytest.fixture
@@ -80,7 +80,7 @@ def mock_modis_data_return_value():
     return data
 
 
-@patch("msftoolbox.modis.modis_client.requests.get")
+@patch("msftoolbox.modis.data.requests.get")
 def test_get_modis_product_dates_success(mock_get, mock_valid_modis_dates_return_value):
     test_client = ModisClient("MOD09A1", 32.061, 8.527)
 
@@ -99,7 +99,7 @@ def test_get_modis_product_dates_success(mock_get, mock_valid_modis_dates_return
     }
 
 
-@patch("msftoolbox.modis.modis_client.requests.get")
+@patch("msftoolbox.modis.data.requests.get")
 def test_get_modis_product_dates_product_not_found(mock_get):
     modis_client = ModisClient("MOD09AB", 32.061, 8.527)
     mock_response = Mock()
@@ -117,7 +117,7 @@ def test_get_modis_product_dates_product_not_found(mock_get):
     assert "Product MOD09AB not found." in str(exc_info.value)
 
 
-@patch("msftoolbox.modis.modis_client.requests.get")
+@patch("msftoolbox.modis.data.requests.get")
 def test_get_modis_product_bands_success(mock_get, mock_valid_modis_bands_return_value):
     test_client = ModisClient("MOD09A1", 32.061, 8.527)
 
@@ -130,7 +130,7 @@ def test_get_modis_product_bands_success(mock_get, mock_valid_modis_bands_return
     assert result == mock_valid_modis_bands_return_value
 
 
-@patch("msftoolbox.modis.modis_client.requests.get")
+@patch("msftoolbox.modis.data.requests.get")
 def test_get_modis_product_data_success(mock_get, mock_modis_data_return_value):
     modis_client = ModisClient("MOD09A1", 32.061, 8.527)
     mock_response = Mock()
@@ -143,7 +143,7 @@ def test_get_modis_product_data_success(mock_get, mock_modis_data_return_value):
     assert result == mock_modis_data_return_value
 
 
-@patch("msftoolbox.modis.modis_client.requests.get")
+@patch("msftoolbox.modis.data.requests.get")
 def test_get_modis_product_data_invalid_band(mock_get):
     modis_client = ModisClient("MOD09AB", 32.061, 8.527)
     mock_response = Mock()

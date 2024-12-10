@@ -1,8 +1,8 @@
-# ReliefWebExtractor
+# ReliefWebClient
 
 ## Overview
 
-`ReliefWebExtractor` is a Python class designed to interact with the Relief Web Updates API. It provides methods for querying reports, retrieving report content, and parsing the data for further analysis or storage.
+`ReliefWebClient` is a Python class designed to interact with the Relief Web Updates API. It provides methods for querying reports, retrieving report content, and parsing the data for further analysis or storage.
 
 ## Features
 
@@ -15,9 +15,9 @@
 ### Initialization
 
 ```python
-from msftoolbox.reliefweb.reports import ReliefWebExtractor
+from msftoolbox.reliefweb.data import ReliefWebClient
 
-client = ReliefWebExtractor(
+client = ReliefWebClient(
     app_name="testing-rwapi",
     preset="latest",
     limit=50,
@@ -57,7 +57,7 @@ Get Reports: Retrieve and process the report data.
 
 ``` python
 # Initialize the client
-client = ReliefWebExtractor()
+client = ReliefWebClient()
 
 # Define parameters
 start_date = '2024-01-01'

@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime
 
-class ReliefWebExtractor():
+class ReliefWebClient():
     """A class that allows to list reports from the Relief Web Updates API,
     loop over the reports and store them to a datalake
 
@@ -13,7 +13,7 @@ class ReliefWebExtractor():
         limit:int = 50,
         profile:str = "full"
         ):
-        """Initialises the Relief Web Extractor
+        """Initialises the Relief Web Client
 
         Args:
             app_name (str, optional): The name of the app. Required by Relief Web for their analytics.

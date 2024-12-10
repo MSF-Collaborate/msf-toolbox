@@ -13,7 +13,7 @@
 To connect to the MODIS REST API you only need to create a client class and use the provided methods.
 
 ```python
-from modis_client import ModisClient
+from msftoolbox.modis.data import ModisClient
 
 modis_client = ModisClient(
     product="modis_product_name",
