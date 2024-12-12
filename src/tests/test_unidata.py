@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 import requests
-from your_module import UniDataAPIClient  # Replace 'your_module' with the actual module name
+from msftoolbox.unidata.data import UniDataAPIClient  # Replace 'your_module' with the actual module name
 
 def test_UniDataAPIClient_init():
     client = UniDataAPIClient(username='user', password='pass', server_url='http://example.com')
