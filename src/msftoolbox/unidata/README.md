@@ -15,7 +15,7 @@
 ### Initialization
 
 ```python
-from your_module import UniDataAPIClient
+from msftoolbox.unidata.data import UniDataAPIClient import UniDataAPIClient
 
 client = UniDataAPIClient(
     username="your_username",
@@ -74,24 +74,36 @@ Fetch Articles: Retrieve and process articles data.
 
 ``` python
 # Initialize the client
+from msftoolbox.unidata.data import UniDataAPIClient import UniDataAPIClient
+
 client = UniDataAPIClient(
     username="your_username",
     password="your_password",
     server_url="https://api.unidata.example.com"
 )
 
-# Get articles with specific filters
-articles = client.get_articles(
-    mode=0,
-    formercode="ABC123",
-    size=10,
-    page=1
-)
+# Fetch articles using a specific mode
+mode = 4
+page = 1
+all_rows = []
 
-# Process articles
-for article in articles['data']:
-    print(article)
+import json
 
+mode = 4
+page = 1
+all_rows = []
+
+while True:
+    articles = client.get_articles(mode=mode, size=100, page=page)
+    rows = articles.get("rows", [])
+
+    for row in rows:
+        row['page_number'] = page
+    all_rows.extend(rows)
+
+    print(f"Processing page {page} with {len(rows)} articles.")
+    page += 1
+    
 ```
 
 ## Error Handling
