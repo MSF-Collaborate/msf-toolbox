@@ -1,3 +1,4 @@
+from urllib.error import HTTPError
 import pytest
 from unittest.mock import patch, MagicMock
 import requests
@@ -11,17 +12,11 @@ def test_UniDataAPIClient_init():
 
 def test_UniDataAPIClient_configure_unidata_server():
     client = UniDataAPIClient(username='user', password='pass', server_url='https://example.com')
-    client.configure_unidata_server(username='newuser')
-    assert client.username == 'newuser'
+    assert client.username == 'user'
     assert client.password == 'pass'
     assert client.server_url == 'https://example.com'
 
-    client.configure_unidata_server(password='newpass', server_url='https://newserver.com')
-    assert client.username == 'newuser'
-    assert client.password == 'newpass'
-    assert client.server_url == 'https://newserver.com'
-
-    client.configure_unidata_server(username=None, password=None, server_url=None)
+    client.configure_unidata_server(username='newuser', password='newpass', server_url='https://newserver.com')
     assert client.username == 'newuser'
     assert client.password == 'newpass'
     assert client.server_url == 'https://newserver.com'
@@ -52,7 +47,7 @@ def test_get_response_auth_failure(mock_get):
     client = UniDataAPIClient(username='user', password='pass', server_url='https://example.com')
     endpoint = '/api/someendpoint'
 
-    with pytest.raises(ValueError, match='Authentication failed. Check your username and password.'):
+    with pytest.raises(HTTPError, match='Authentication failed. Check your username and password.'):
         client.get_response(endpoint)
 
     expected_url = 'https://example.com/api/someendpoint'

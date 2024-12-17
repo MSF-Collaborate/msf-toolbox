@@ -1,4 +1,5 @@
 import requests
+from urllib.error import HTTPError
 
 class UniDataAPIClient:
     """
@@ -8,14 +9,20 @@ class UniDataAPIClient:
     requests to the server, and fetch specific data such as articles, subcatalogues, intros, and checklists.
     """
 
-    def __init__(self, username=None, password=None, server_url=None, timeout=10):
+    def __init__(
+        self,
+        username:str,
+        password:str,
+        server_url:str,
+        timeout=10
+        ):
         """
         Initializes the UniDataAPIClient instance with optional UniData server credentials and URL.
 
         Args:
-            username (str, optional): UniData username. Defaults to None.
-            password (str, optional): UniData password. Defaults to None.
-            server_url (str, optional): UniData server URL. Defaults to None.
+            username (str): UniData username.
+            password (str): UniData password.
+            server_url (str): UniData server URL.
             timeout (int, optional): Default timeout for requests in seconds. Defaults to 10.
         """
         self.username = username
@@ -23,16 +30,21 @@ class UniDataAPIClient:
         self.server_url = server_url
         self.timeout = timeout
 
-    def configure_unidata_server(self, username=None, password=None, server_url=None):
+    def configure_unidata_server(
+        self,
+        username:str,
+        password:str,
+        server_url:str
+        ):
         """
         Configures the UniData server credentials and URL.
 
         This method allows updating the UniData server username, password, and URL.
 
         Args:
-            username (str, optional): UniData username. Defaults to None.
-            password (str, optional): UniData password. Defaults to None.
-            server_url (str, optional): UniData server URL. Defaults to None.
+            username (str): UniData username.
+            password (str): UniData password.
+            server_url (str): UniData server URL.
         """
         if username is not None:
             self.username = username
@@ -41,7 +53,12 @@ class UniDataAPIClient:
         if server_url is not None:
             self.server_url = server_url
 
-    def get_response(self, endpoint, params=None, timeout=None):
+    def get_response(
+        self,
+        endpoint:str,
+        params:dict=None,
+        timeout:int=None
+        ):
         """
         Makes an authenticated GET request to the specified endpoint and returns the JSON response.
 
@@ -66,7 +83,13 @@ class UniDataAPIClient:
 
         response = requests.get(url, params=params, timeout=timeout)
         if response.status_code == 401:
-            raise ValueError("Authentication failed. Check your username and password.")
+            raise HTTPError(
+                response.url,
+                response.status_code,
+                "Authentication failed. Check your username and password.",
+                response.headers,
+                None
+                )
         response.raise_for_status()
 
         return response.json()
