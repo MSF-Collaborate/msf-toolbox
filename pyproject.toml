@@ -32,7 +32,9 @@ dependencies = [
     "openai==1.55.3",
     "Office365-REST-Python-Client==2.5.13",
     "newspaper3k==0.2.8",
-    "lxml_html_clean==0.1.1"
+    "lxml_html_clean==0.1.1",
+    "SQLAlchemy==2.0.36",
+    "pyodbc==5.2.0"
 ]
 
 [project.optional-dependencies]
