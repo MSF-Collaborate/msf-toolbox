@@ -101,7 +101,7 @@ class MessageClassification(BaseModel):
     region: str
     confidence: float = Field(description="Confidence in the location of the region (0-1)")
 
-message = "We are horrified by the recent bombing..."
+message = "Peacefull protests were condudcted in Barcelona ..."
 system_message = "Classify each user message into one of the following regions: Middle East, Europe, North America, South America, Asia"
 
 structured_response = client.structured_chat_completion(
