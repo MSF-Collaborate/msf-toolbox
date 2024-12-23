@@ -1,3 +1,4 @@
+------------------------------------
 # AzureOpenAiClient
 
 ## Overview
@@ -118,3 +119,14 @@ embeddings, total_tokens = client.create_embedding(
 ```
 
 This class provides a robust framework for interacting with Azure OpenAI services, enabling seamless integration of AI capabilities into your applications.
+
+--------------------
+# AzureKeyvaultClient
+To be done
+
+--------------------
+
+# AzureStorageContainerClient
+To be done
+
+--------------------

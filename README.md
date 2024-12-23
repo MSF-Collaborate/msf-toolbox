@@ -21,7 +21,7 @@ The toolbox is designed to simplify the interaction with multiple services, prov
 - Provides easy-to-use and well documented classes for specific tools that are used within the context of MSF:
     - [DHIS2](https://dhis2.org/)
     - [Sharepoint](https://www.microsoft.com/nl-nl/microsoft-365/sharepoint/collaboration) -> [Documentation](./src/msftoolbox/sharepoint/README.md)
-    - [Azure](https://azure.microsoft.com/)
+    - [Azure](https://azure.microsoft.com/) -> [Documentation](./src/msftoolbox/azure/README.md)
     - [PowerBI](https://www.microsoft.com/nl-nl/power-platform/products/power-bi) -> [Documentation](./src/msftoolbox/powerbi/README.md)
     - [Reliefweb](https://reliefweb.int/) -> [Documentation](./src/msftoolbox/reliefweb/README.md)
     - [GDELT](https://www.gdeltproject.org/) -> [Documentation](./src/msftoolbox/gdelt/README.md)
