@@ -119,13 +119,15 @@ class AzureSQLClient:
             Exception: If the test query fails, an exception will be raised.
         """
         try:
-            self.execute_sql_query("SELECT 1")
+            self.execute_query("SELECT 1")
         except Exception as e:
             raise ConnectionError(f"Failed to establish a connection to the database: {e}")
 
-    def execute_sql_query(self, sql_query: str, params: tuple = None) -> pd.DataFrame:
+    def get_data(self, sql_query: str, params: tuple = None) -> pd.DataFrame:
         """
         Executes a SQL query on a database engine with optional parameters and returns the result as a pandas DataFrame.
+        Use this method to return data from the SQL Database.
+        For instance: SELECT, EXEC (for stored procedures that do not return data)
 
         Args:
             sql_query (str): The SQL query to execute.
@@ -137,7 +139,24 @@ class AzureSQLClient:
         with self.engine.connect() as conn:
             sql_query = text(sql_query)
             if params is not None:
-                df = pd.read_sql_query(sql_query, conn, params=params)
+                df_data = pd.read_sql_query(sql_query, conn, params=params)
             else:
-                df = pd.read_sql_query(sql_query, conn)
-        return df
+                df_data = pd.read_sql_query(sql_query, conn)
+        return df_data
+
+    def execute_query(self, sql_query: str) -> None:
+        """
+        Executes a SQL query on a database engine with no return value.
+        Use this method to execute statements that do not return rows of data.
+        For instance: CREATE, DROP, EXEC (for stored procedures that do not return data),
+        INSERT, GRANT, REVOKE, DELETE, TRUNCATE.
+
+        Args:
+            sql_query (str): The SQL query to execute.
+
+        Returns:
+            None
+        """
+        with self.engine.connect() as conn:
+            conn.execute(text(sql_query))
+            conn.commit()
