@@ -1,6 +1,10 @@
-from typing import List, Tuple
+from typing import List, Type, TypeVar, Generic, Tuple
 import openai
 import json
+from pydantic import BaseModel
+
+# Define a type variable for Pydantic models
+T = TypeVar('T', bound=BaseModel)
 
 class AzureOpenAiClient:
     def __init__(
@@ -78,6 +82,50 @@ class AzureOpenAiClient:
         )
 
         return response
+
+    def structured_chat_completion(
+        self,
+        model: str,
+        system_content: str,
+        user_content: str,
+        response_format: Type[T],
+        **kwargs
+    ) -> T:
+        """
+        Send a chat completion request with structured output parsing. Pydantic models are needed to structure the output
+
+        Args:
+            model (string): The model to use for the completion.
+            system_content (string): The content for the system role.
+            user_content (string): The content for the user role.
+            response_format (Type[T]): The Pydantic model to parse the response into.
+            **kwargs: Additional keyword arguments for the API call.
+
+        Returns:
+            T: The parsed response as an instance of the provided Pydantic model.
+        """
+        messages = [
+            {
+                "role": "system",
+                "content": system_content
+            },
+            {
+                "role": "user",
+                "content": user_content
+            }
+        ]
+
+        response = self.open_ai_client.beta.chat.completions.parse(
+            model=model,
+            messages=messages,
+            response_format=response_format,
+            **kwargs
+        )
+
+        # Extract and parse the structured response
+        parsed_response = response.choices[0].message.parsed
+
+        return parsed_response
 
     def create_embedding(
         self,
