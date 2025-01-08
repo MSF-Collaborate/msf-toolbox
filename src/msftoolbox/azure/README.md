@@ -40,6 +40,7 @@ response = client.chat_completions(
 ```
 #### Structured Chat Completion
 Send a chat completion request with structured output parsing using Pydantic models.
+Refer to the documentation [here](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/structured-outputs?tabs=python-secure) for other options. Note that structured outputs was first introduced in API version 2024-08-01-preview.
 
 ```python
 
