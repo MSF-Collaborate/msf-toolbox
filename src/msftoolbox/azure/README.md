@@ -16,12 +16,13 @@
 ### Initialization
 
 ```python
-from yourmodule import AzureOpenAiClient
+from msftoolbox.azure.azure_open_ai import AzureOpenAiClient
 
 client = AzureOpenAiClient(
     open_ai_key="your_api_key",
     base_endpoint="https://your_base_endpoint",
-    api_version="2023-03-15-preview"
+    api_version="2023-03-15-preview",
+    keep_history=True # Defaults to False
 )
 ```
 
@@ -38,6 +39,22 @@ response = client.chat_completions(
     max_tokens=150
 )
 ```
+
+#### Chat Completions with chat history
+Generate a response based on user input and system guidance as well as the last message in the conversation.
+
+```python
+response = client.chat_completions(
+    model="gpt-3.5-turbo",
+    system_content="The system's instructions for context",
+    user_content="User's message",
+    add_history_to_prompt=True, 
+    history_depth=1,
+    temperature=0.5,
+    max_tokens=150
+)
+```
+
 #### Structured Chat Completion
 Send a chat completion request with structured output parsing using Pydantic models.
 Refer to the documentation [here](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/structured-outputs?tabs=python-secure) for other options. Note that structured outputs was first introduced in API version 2024-08-01-preview.
