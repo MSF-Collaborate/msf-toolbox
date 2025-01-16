@@ -1,4 +1,4 @@
-from typing import List, Type, TypeVar, Generic, Tuple
+from typing import List, Type, TypeVar, Tuple
 import openai
 import json
 from pydantic import BaseModel
@@ -11,8 +11,9 @@ class AzureOpenAiClient:
         self,
         open_ai_key: str,
         base_endpoint: str,
-        api_version: str ="2023-03-15-preview"
-        ):
+        api_version: str = "2023-03-15-preview",
+        keep_history: bool = False,
+    ):
         """
         Initialize the AzureOpenAi with the OpenAI API key and endpoint.
 
@@ -20,28 +21,33 @@ class AzureOpenAiClient:
             open_ai_key (string): The API key for Azure OpenAI.
             base_endpoint (string): The base endpoint URL for Azure OpenAI.
             api_version (string): The API version to use (default is "2023-03-15-preview").
+            keep_history (bool): Whether to keep a history of chat interactions (default is False).
         """
         self.open_ai_key = open_ai_key
         self.base_endpoint = base_endpoint
         self.api_version = api_version
+        self.keep_history = keep_history
+        self.chat_history: List[Tuple[str, str]] = []  # Stores (question, answer) pairs
         self.open_ai_client = openai.AzureOpenAI(
             api_key=open_ai_key,
             api_version=api_version,
             azure_endpoint=base_endpoint
-            )
+        )
 
     def chat_completions(
         self,
         model: str,
         system_content: str,
         user_content: str,
+        add_history_to_prompt: bool = False,
+        history_depth: int = 1,
         temperature: float = 0.3,
         max_tokens: int = 1000,
         top_p: float = 0.9,
         frequency_penalty: float = 0,
         presence_penalty: float = 0,
         **kwargs
-        ) -> dict:
+    ) -> dict:
         """
         Send a chat completion request to the OpenAI API.
 
@@ -49,6 +55,8 @@ class AzureOpenAiClient:
             model (string): The model to use for the completion.
             system_content (string): The content for the system role.
             user_content (string): The content for the user role.
+            add_history_to_prompt (bool): Whether to include chat history in the prompt (default is False).
+            history_depth (int): Number of previous question/answer pairs to include in the prompt.
             temperature (float): Sampling temperature.
             max_tokens (int): Maximum number of tokens to generate.
             top_p (float): Nucleus sampling parameter.
@@ -59,20 +67,22 @@ class AzureOpenAiClient:
         Returns:
             dict: The response from the OpenAI API.
         """
-        message = [
-            {
-                "role": "system",
-                "content": system_content
-            },
-            {
-                "role": "user",
-                "content": user_content
-            }
-        ]
+        # Prepare the messages for the chat completion
+        messages = [{"role": "system", "content": system_content}]
+        
+        # Add chat history to the prompt if enabled
+        if add_history_to_prompt and self.chat_history:
+            for question, answer in self.chat_history[-history_depth:]:
+                messages.append({"role": "user", "content": f"Previous question: {question}"})
+                messages.append({"role": "assistant", "content": f"Previous question: {answer}"})
+        
+        # Add the current user input
+        messages.append({"role": "user", "content": user_content})
 
+        # Send the request to the OpenAI API
         response = self.open_ai_client.chat.completions.create(
             model=model,
-            messages=message,
+            messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
             top_p=top_p,
@@ -80,6 +90,12 @@ class AzureOpenAiClient:
             presence_penalty=presence_penalty,
             **kwargs
         )
+
+        # Store the interaction in history if enabled
+        if self.keep_history:
+            # Extract the assistant's response
+            assistant_response = response.choices[0].message.content
+            self.chat_history.append((user_content, assistant_response))
 
         return response
 
@@ -147,10 +163,10 @@ class AzureOpenAiClient:
                 - int: The total number of tokens used in the embedding process.
         """
         response = self.open_ai_client.embeddings.create(
-                    input=data_to_vectorize,
-                    model=embedding_model,
-                    dimensions=embedding_dimensions
-                    )
+            input=data_to_vectorize,
+            model=embedding_model,
+            dimensions=embedding_dimensions
+            )
 
         response_json = json.loads(response.json())
 
