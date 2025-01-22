@@ -22,6 +22,9 @@ class AzureOpenAiClient:
             base_endpoint (string): The base endpoint URL for Azure OpenAI.
             api_version (string): The API version to use (default is "2023-03-15-preview").
             keep_history (bool): Whether to keep a history of chat interactions (default is False).
+                When True, the client will maintain the chat history as a list of Tuple (question, answer)
+                in the instance attribute chat_history. This history is scoped to the instance and resets
+                when the Python process ends or the instance is reinitialized.
         """
         self.open_ai_key = open_ai_key
         self.base_endpoint = base_endpoint
@@ -56,7 +59,14 @@ class AzureOpenAiClient:
             system_content (string): The content for the system role.
             user_content (string): The content for the user role.
             add_history_to_prompt (bool): Whether to include chat history in the prompt (default is False).
+                For this to work, enable keep_chat_history in the class instance and adjust history_depth.
+                Please note that adding history to the prompt means you will be billed for the tokens of the
+                history in addition to the tokens of the prompt for each new chat completion request.
             history_depth (int): Number of previous question/answer pairs to include in the prompt.
+                For this to work, enable keep_chat_history in the class instance and set the method argument
+                add_history_to_prompt to True.
+                Please note that adding history to the prompt means you will be billed for the tokens of the
+                history in addition to the tokens of the prompt for each new chat completion request.
             temperature (float): Sampling temperature.
             max_tokens (int): Maximum number of tokens to generate.
             top_p (float): Nucleus sampling parameter.
