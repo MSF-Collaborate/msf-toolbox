@@ -149,8 +149,135 @@ embeddings, total_tokens = client.create_embedding(
 This class provides a robust framework for interacting with Azure OpenAI services, enabling seamless integration of AI capabilities into your applications.
 
 --------------------
-# AzureKeyvaultClient
-To be done
+# AzureStorageContainerClient
+
+## Overview
+
+`AzureStorageContainerClient` is a Python class designed to interact with Azure Blob Storage. It provides methods for downloading and uploading files, listing files in a container, and deleting blobs. The class supports multiple authentication mechanisms, including Azure CLI, Managed Identity, Default Azure Credentials, and storage account keys.
+
+## Features
+
+- **Multiple Authentication Options**: Authenticate using Azure CLI, Managed Identity, Default Azure Credentials, or a storage account key.
+- **Blob Download**: Download blob files to local storage or directly to a stream.
+- **Blob Upload**: Upload files from local storage to Azure Blob Storage.
+- **List Files**: List all files in a specific folder within a container.
+- **Delete Blobs**: Delete one or more blobs from the container.
+- **DataFrame Conversion**: Convert CSV blob files to pandas DataFrames for data analysis.
+
+## Usage
+
+### Initialization
+
+Initialize the `AzureStorageContainerClient` with the necessary credentials and parameters.
+
+```python
+from your_module import AzureStorageContainerClient
+
+client = AzureStorageContainerClient(
+    storage_account_url="https://<your_account_name>.blob.core.windows.net",
+    container_name="your-container-name",
+    local_run=True,  # Set to False if running in production
+    managed_identity_client_id="your-managed-identity-client-id",  # Optional
+    account_key="your-storage-account-key"  # Optional
+)
+```
+
+### Methods
+
+#### Download Blob to Stream
+
+Download a blob file directly to a stream for further processing.
+
+```python
+stream = client.download_blob_file_to_stream(
+    datalake_path="path/to/blob"
+)
+```
+
+#### Download Blob to Local File
+
+Download a blob file to a specified local path.
+
+```python
+client.download_blob_file(
+    datalake_path="path/to/blob",
+    destination_path="/local/path/to/save/file"
+)
+```
+
+#### Upload File to Blob
+
+Upload a local file to a specified path in Azure Blob Storage.
+
+```python
+client.upload_object_to_blob(
+    temp_location="/local/path/to/file",
+    datalake_destination="path/in/blob/storage"
+)
+```
+
+#### List Files in Folder
+
+List all files in a specific folder within the container.
+
+```python
+files = client.list_files_in_folder(
+    folder_path="path/to/folder"
+)
+```
+
+#### Download Blob to DataFrame
+
+Convert a CSV blob file to a pandas DataFrame for data analysis.
+
+```python
+df = client.download_blob_file_to_dataframe(
+    datalake_path="path/to/csv/blob"
+)
+```
+
+#### Delete Files
+
+Delete one or more blobs from the container.
+
+```python
+client.delete_files(
+    file_paths=["path/to/blob1", "path/to/blob2"]
+)
+```
+
+## Example Workflow
+
+Download a CSV file, convert it to a DataFrame, and then upload a modified version back to Azure Blob Storage.
+
+```python
+# Initialize the client
+client = AzureStorageContainerClient(
+    storage_account_url="https://<your_account_name>.blob.core.windows.net",
+    container_name="your-container-name",
+    account_key="your-storage-account-key"
+)
+
+# Download CSV and convert to DataFrame
+df = client.download_blob_file_to_dataframe(
+    datalake_path="path/to/csv/blob"
+)
+
+# Perform data manipulation
+df['new_column'] = df['existing_column'] * 2
+
+# Save modified DataFrame to a local CSV
+df.to_csv("/local/path/to/modified.csv", index=False)
+
+# Upload modified CSV back to Azure Blob Storage
+client.upload_object_to_blob(
+    temp_location="/local/path/to/modified.csv",
+    datalake_destination="path/to/modified/blob"
+)
+```
+
+This class provides a comprehensive interface for managing Azure Blob Storage operations, enabling efficient data handling and storage management.
+
 
 --------------------
 
