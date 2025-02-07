@@ -11,7 +11,8 @@ class AzureStorageContainerClient:
         storage_account_url: str,
         container_name: str,
         local_run: bool = True,
-        managed_identity_client_id: str = None
+        managed_identity_client_id: str = None,
+        account_key: str = None
         ):
         """
         Initialize the AzureDataLakeConnector with datalake_url and determine the credential type.
@@ -20,38 +21,40 @@ class AzureStorageContainerClient:
             storage_account_url (string): The URL of the storage account.
             container_name (string): The name of the container in the storage account.
             local_run (bool): Flag to determine if running locally or in production.
-            managed_identity_client_id (str): The managed_identity_client_id required for ManagedIdentityCredentials
+            managed_identity_client_id (str): The managed_identity_client_id required for ManagedIdentityCredentials.
+            account_key (str): The storage account access key for authentication.
         """
         self.local_run = local_run
         self.managed_identity_client_id = managed_identity_client_id
         self.storage_account_url = storage_account_url
         self.container_name = container_name
+        self.account_key = account_key
         self.credential = self._get_credential()
 
         blob_service_client = BlobServiceClient(
             account_url=self.storage_account_url,
             credential=self.credential
-            )
+        )
 
         self.container_client = blob_service_client.get_container_client(
             self.container_name
-            )
+        )
 
-    def _get_credential(
-        self
-        ):
+    def _get_credential(self):
         """
-        Determine the credential type based on the local_run flag.
+        Determine the credential type based on the provided parameters.
 
         Returns:
             credential (object): The credentials to be used for authentication.
         """
-        if self.local_run:
+        if self.account_key:
+            return self.account_key
+        elif self.local_run:
             return AzureCliCredential()
         elif self.managed_identity_client_id is not None:
             return ManagedIdentityCredential(
-                client_id = self.managed_identity_client_id
-                )
+                client_id=self.managed_identity_client_id
+            )
         else:
             return DefaultAzureCredential()
 
