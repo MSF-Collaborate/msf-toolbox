@@ -9,7 +9,45 @@ api_token = "mock_api_token"
 base_url = "https://kobo.example.com/"
 client = KoboClient(base_url, api_token)
 mock_results = {'results': [{'name': 'Asset1', 'uid': '123'}, {'name': 'Asset2', 'uid': '456'}]}
- 
+
+#done; harcode the url/token? or use above params?
+
+def test_KoboClient_init():
+    kobo = KoboClient(base_url = base_url, api_token =api_token )
+    assert kobo.base_url == "https://kobo.example.com/"
+    assert kobo.headers == {'Authorization': f'Token ''mock_api_token'}
+
+# :TODO # add auth_test in class
+# add auth test; mock 401
+# @patch('requests.get')
+# def test_KoboClient_auth():
+#     mock_response = Mock()
+#     mock_response.msg = 401
+#     mock_response.text = {"detail":"Invalid token."}
+#     mock_response.text = {"detail":"Invalid token."}
+#     {
+#                     "Authenticated": False,
+#                     "Status_code": response.status_code,
+#                     "Error": response.text
+#                 }
+#     assert kobo.headers == 'Authentication failed. Status: 401, Error: {"detail":"Invalid token."}' 
+
+
+@patch('requests.get')
+def test_authentication_failure(mock_get):
+    # Mock failed authentication response
+    mock_response = Mock()
+    mock_response.status_code = 401
+    mock_response.json.return_value = {'Authenticated': False, 'Error': 'Unauthorized'}
+    mock_get.return_value = mock_response
+
+    with mock_get.assertRaises(RuntimeError) as context:
+        KoboClient(base_url="https://kobo.example.com/", api_token='invalid_token')
+    
+    mock_get.assertIn("Authentication failed", str(context.exception))
+    print("Test passed: Authentication failed with invalid token.")
+
+
 @patch('requests.get')
 def test_list_assets(mock_get):
     mock_response = Mock()
@@ -42,6 +80,7 @@ def test_get_asset_data(mock_get):
     # Mock paginated response
     mock_response_page1 = Mock()
     mock_response_page1.status_code = 200
+    #TODO: adjust pagination example url
     mock_response_page1.json.return_value = {'results': [{'data': 'page1'}], 'next': f'{base_url}assets/123/data/page2'}
 
     mock_response_page2 = Mock()
@@ -55,19 +94,22 @@ def test_get_asset_data(mock_get):
     asset_data = client.get_asset_data('123')
     assert asset_data == [{'data': 'page1'}, {'data': 'page2'}], "Obtained asset data does not match expected data for two mocked pages"
 
+
+#Done
 @patch.object(KoboClient, 'get_asset', return_value={
     'content': {
         'survey': [
-            {'type': 'text', 'name': 'question1','label': ['Question 1'], '$xpath': '/group/question1'},
-            {'type': 'text', 'name': 'question1','label': ['Question 2']}
+              {'name': 'ASSESSMENT_DATE',   'type': 'date',   'label': ['Date of assessment', 'Date de l’évaluation'],   '$xpath': 'ASSESSMENT_DATE',  'required': True},
+              {'name': 'Question_1',  'type': 'select_one',  'label': ['1. Full question written in English', '1. Full question written in another language'],   '$xpath': 'RPT1/GRP1/Question_1',   'required': None  },
         ]
     }
 })
 def test_get_asset_metadata(mock_get_asset):
     metadata = client.get_asset_metadata('123')
     expected_metadata = [
-        {'type': 'text', 'group': 'group', 'name': 'question1', 'label': ['Question 1'], 'hint': None, 'required': None, 'question_code': '/group/question1'},
-        {'type': 'text', 'group': None, 'name': 'question2', 'label': ['Question 2'], 'hint': None, 'required': None, 'question_code': '/group/question2'}
+        {'type': 'date', 'group': None, 'name': 'ASSESSMENT_DATE', 'label': ['Date of assessment', 'Date de l’évaluation'], 'hint': None, 'required': True, 'question_code': 'ASSESSMENT_DATE'},
+        {'type': 'select_one', 'group': 'GRP1', 'name': 'Question_1', 'label': ['1. Full question written in English', '1. Full question written in another language'], 'hint': None, 'required': None, 'question_code': 'RPT1/GRP1/Question_1'}
+        
     ]
-    print(metadata)
+
     assert metadata == expected_metadata, "Expected metadata does not match mocked metadata"
