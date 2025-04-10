@@ -1,6 +1,4 @@
 
-import datetime
-import pandas as pd
 import json
 import requests
 from requests.auth import HTTPBasicAuth
@@ -25,6 +23,41 @@ class KoboClient:
             'Authorization': f'Token {api_token}'
         }
 
+        # Run authentication check on init
+        self.auth_status = self._check_auth()
+
+        if not self.auth_status["Authenticated"]:
+            msg = (
+                f"Authentication failed. "
+                f"Status: {self.auth_status.get('Status_code')}, "
+                f"Error: {self.auth_status.get('Error')}"
+            )
+            raise RuntimeError(msg)
+        else:
+            print(f"Authentication succeeded")
+
+    def _check_auth(self): 
+        # Check authentication by checking access to assets
+        url = f"{self.base_url}/assets/"
+        try:
+            response = requests.get(url, headers=self.headers, params=self.params)
+            if response.status_code == 200:
+                return {
+                    "Authenticated": True,
+                    "Status_code": response.status_code
+                }
+            else:
+                return {
+                    "Authenticated": False,
+                    "Status_code": response.status_code,
+                    "Error": response.text
+                }
+        except requests.exceptions.RequestException as e:
+            return {
+                "Authenticated": False,
+                "Error": str(e)
+            }
+
     def list_assets(self):
         """
         Retrieve a list of all assets/surveys from the Kobo API, available for this user.
@@ -46,7 +79,7 @@ class KoboClient:
 
     def get_asset_uid(self, asset_name):
         """
-        Get the asset ID (UID) based on the asset name.
+        Get the asset UID based on the asset name.
 
         Args:
             asset_name (str): The name of the asset to look up.
@@ -130,19 +163,16 @@ class KoboClient:
         This method retrieves the asset structure from an asset identified by its unique ID
         and extracts relevant information such as the group, name, type, and labels of each survey item.
 
-        Parameters:
-        ----------
-        asset_uid : str
-            The unique identifier of the asset from which to extract asset labels and metadata.
+        Args:
+            asset_uid (str): The unique identifier of the asset to retrieve data from.
 
         Returns:
-        -------
-        list of dict
-            A list of dictionaries where each dictionary contains the following keys:
-            - 'group': The group name extracted from the item's XPath, or None if not applicable.
-            - 'name': The name of the survey item.
-            - 'type': The type of the survey item.
-            - 'label': A list of labels associated with the survey item.
+            list of dict
+                A list of dictionaries where each dictionary contains the following keys:
+                - 'group': The group name extracted from the item's XPath, or None if not applicable.
+                - 'name': The name of the survey item.
+                - 'type': The type of the survey item.
+                - 'label': A list of labels associated with the survey item.
 
         Notes:
         -----
@@ -187,6 +217,48 @@ class KoboClient:
                 'hint': hint,
                 'required': required,
                 'question_code': xpath
+            }
+            extracted_data.append(data_entry)
+
+        return extracted_data
+
+
+    def get_asset_choice_items(self, asset_uid):
+        """
+        This function retrieves the choice items from an asset dictionary
+        and extracts relevant information such as the name and label (multiple languages, if applicable)
+
+        Args:
+            asset_uid (str): The unique identifier of the asset to retrieve data from.
+
+        Returns:
+            list of dict
+                A list of dictionaries where each dictionary contains the following keys:
+                - 'list_name': The name of the list this choice item belongs to
+                - 'name': The name of the item.
+                - 'label': A list of labels associated with the answers
+
+        Notes:
+        -----
+        - The method assumes that the asset dictionary contains a 'content' key with a 'choices' key,
+        which is a list of choice item dictionaries.
+
+            """
+        asset_dict = self.get_asset(asset_uid)
+        choice_items = asset_dict['content']['choices']
+        extracted_data = []
+
+        for item in choice_items:
+            # Extract the necessary fields
+            list_name = item.get('list_name')
+            name = item.get('name')
+            label = item.get('label', [])
+
+            # Create a dictionary with the extracted data
+            data_entry = {
+                'list_name':list_name,
+                'name': name,
+                'label': label
             }
             extracted_data.append(data_entry)
 
