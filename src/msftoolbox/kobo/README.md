@@ -37,22 +37,26 @@ surveys = client.list_assets()
 
 #### Get Asset UID
 Get the asset UID based on the asset name. The asset ID is required for all interactions with a specific asset.
+The asset name can be found in the Kobo user interface (referred to as 'Project Name') . For example:
+
+![image](https://github.com/user-attachments/assets/00ae1829-f992-4a66-8404-03e8c52c22bc)
+
 
 ```python
 asset_uid = client.get_asset_uid(
-    asset_name="My First Survey"
+    asset_name="Hand Hygiene Observation Tool"
     )
 ```
 
 #### Get Asset
-Retrieve a specific asset/survey from the Kobo API. Can be used in combination with get_asset_answer_metadata to extract answer labels.
+Retrieve a specific asset from the Kobo API. Can be used in combination with get_asset_choice_items to extract answer labels.
 
 ```python
 asset_dict = client.get_asset(asset_uid = '129aby')  
 ```
 
 #### Get Asset Data
-Retrieve all data for a specific Kobo asset/survey. This function is set up to handle pagination in the API response. The Kobo server has a limit of returning 30000 records per page. The function loops through the pages and combines all data in a list of dictionaries with the results.
+Retrieve all data for a specific Kobo asset. This function is set up to handle pagination in the API response. The Kobo server has a limit of returning 30000 records per page. The function loops through the pages and combines all data in a list of dictionaries with the results.
 
 ```python
 asset_list = client.get_asset_data(asset_uid = '129aby')  
@@ -64,7 +68,7 @@ import pandas as pd
 asset_df = pd.json_normalize(asset_list)  
 ```
 #### Get Asset Metadata
-Extracts labels and related metadata from a specified asset. This function can be used to retrieve the structure of the survey (What questions were asked, how were the questions grouped etc.) It returns all questions in the survey, their group, label (full question text, can be in multiple languages), including system-generated entires (e.g. SURVEY_START_TIME).
+Extracts labels and related metadata from a specified asset. This function can be used to retrieve the structure of the survey (What questions were asked, how were the questions grouped etc.) It returns all questions in the survey, their group, label (i.e. full question text, can be in multiple languages), including system-generated entries (e.g. SURVEY_START_TIME).
 
 ```python
 asset_metadata_list = client.get_asset_metadata(asset_uid = '129aby')  
