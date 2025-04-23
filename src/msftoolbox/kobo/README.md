@@ -41,7 +41,6 @@ The asset name can be found in the Kobo user interface (referred to as 'Project 
 
 ![image](https://github.com/user-attachments/assets/00ae1829-f992-4a66-8404-03e8c52c22bc)
 
-
 ```python
 asset_uid = client.get_asset_uid(
     asset_name="Hand Hygiene Observation Tool"
