@@ -52,14 +52,14 @@ asset_uid = client.get_asset_uid(
 Retrieve a specific asset from the Kobo API. Can be used in combination with get_asset_choice_items to extract answer labels.
 
 ```python
-asset_dict = client.get_asset(asset_uid = '129aby')  
+asset_dict = client.get_asset(asset_uid = 'gh3NsxvpoBmltERFuKcVnD')  
 ```
 
 #### Get Asset Data
-Retrieve all data for a specific Kobo asset. This function is set up to handle pagination in the API response. The Kobo server has a limit of returning 30000 records per page. The function loops through the pages and combines all data in a list of dictionaries with the results.
+Retrieve all data for a specific Kobo asset. This function is set up to handle pagination in the API response. The Kobo server has a limit of returning 30.000 records per page. The function loops through the pages and combines all data in a list of dictionaries with the results.
 
 ```python
-asset_list = client.get_asset_data(asset_uid = '129aby')  
+asset_list = client.get_asset_data(asset_uid = 'gh3NsxvpoBmltERFuKcVnD')  
 ```
 
 The resulting asset list can be converted into a Pandas Datframe.
@@ -71,13 +71,13 @@ asset_df = pd.json_normalize(asset_list)
 Extracts labels and related metadata from a specified asset. This function can be used to retrieve the structure of the survey (What questions were asked, how were the questions grouped etc.) It returns all questions in the survey, their group, label (i.e. full question text, can be in multiple languages), including system-generated entries (e.g. SURVEY_START_TIME).
 
 ```python
-asset_metadata_list = client.get_asset_metadata(asset_uid = '129aby')  
+asset_metadata_list = client.get_asset_metadata(asset_uid = 'gh3NsxvpoBmltERFuKcVnD')  
 ```
 
 #### Get Asset Choice Items
 This function extracts choice items from an asset dictionary, pulling out key details like the list name, item name, and label. It's useful for obtaining the choice items used in a survey, essentially identifying which answer options were presented for each question. The function returns all possible answers in the survey along with their labels, which include the full answer text and can be available in multiple languages.
 
 ```python
-asset_choice_item_list = client.get_asset_choice_items(asset_uid = '129aby')
+asset_choice_item_list = client.get_asset_choice_items(asset_uid = 'gh3NsxvpoBmltERFuKcVnD')
 ```
 
