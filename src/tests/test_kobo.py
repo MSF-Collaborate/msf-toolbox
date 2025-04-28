@@ -4,13 +4,14 @@ from msftoolbox.kobo.data import KoboClient
 # Mocked API token and base URL
 api_token = "mock_api_token"
 base_url = "https://kobo.example.com/"
-mock_asset_id = 'gh3NsxvpoBmltERFuKcVnD'
+mock_asset_id_01 = "gh3NsxvpoBmltERFuKcVnD"
+mock_asset_id_02 = "tk7QwzjbiGvypNXUfLsCmH"
 
 # Mocked assets
 mock_results = {
     'results': [
-        {'name': 'Asset1', 'uid': 'gh3NsxvpoBmltERFuKcVnD'},
-        {'name': 'Asset2', 'uid': 'tk7QwzjbiGvypNXUfLsCmH'}
+        {'name': 'Asset1', 'uid': f'{mock_asset_id_01}'},
+        {'name': 'Asset2', 'uid': f'{mock_asset_id_02}'}
     ]
 }
 
@@ -24,7 +25,7 @@ mock_asset_content = {
 }
 
 # Mocked paginated asset data
-mock_asset_data_page1 = {'results': [{'data': 'page1'}], 'next': f'{base_url}assets/gh3NsxvpoBmltERFuKcVnD/data?format=json&limit=30000&start=30000'}
+mock_asset_data_page1 = {'results': [{'data': 'page1'}], 'next': f'{base_url}assets/{mock_asset_id_01}/data?format=json&limit=30000&start=30000'}
 mock_asset_data_page2 = {'results': [{'data': 'page2'}], 'next': None}
 
 # Mocked asset metadata
@@ -67,7 +68,7 @@ def test_list_assets(mock_check_auth):
 def test_get_asset_uid(mock_list_assets, mock_check_auth):
     client = KoboClient(base_url=base_url, api_token=api_token)
     asset_uid = client.get_asset_uid('Asset2')
-    assert asset_uid == 'tk7QwzjbiGvypNXUfLsCmH', "UID does not match expected value"
+    assert asset_uid == f'{mock_asset_id_02}', "UID does not match expected value"
     mock_list_assets.assert_called_once()
 
 # Test for getting specific asset details
@@ -80,8 +81,8 @@ def test_get_asset(mock_check_auth):
         mock_response.json.return_value = mock_asset_content
         mock_get.return_value = mock_response
 
-        asset = client.get_asset(mock_asset_id)
-        mock_get.assert_called_with(f'{base_url}assets/gh3NsxvpoBmltERFuKcVnD', params=client.params, headers=client.headers)
+        asset = client.get_asset(mock_asset_id_01)
+        mock_get.assert_called_with(f'{base_url}assets/{mock_asset_id_01}', params=client.params, headers=client.headers)
         assert asset == mock_asset_content, "Asset content does not match expected value"
 
 # Test for getting paginated asset data
@@ -99,7 +100,7 @@ def test_get_asset_data(mock_check_auth):
 
         mock_get.side_effect = [mock_response_page1, mock_response_page2]
 
-        asset_data = client.get_asset_data(mock_asset_id)
+        asset_data = client.get_asset_data(mock_asset_id_01)
         assert asset_data == [{'data': 'page1'}, {'data': 'page2'}], "Paginated asset data does not match expected results"
 
 # Test for getting asset metadata
@@ -107,7 +108,7 @@ def test_get_asset_data(mock_check_auth):
 @patch.object(KoboClient, 'get_asset', return_value=mock_asset_metadata)
 def test_get_asset_metadata(mock_get_asset, mock_check_auth):
     client = KoboClient(base_url=base_url, api_token=api_token)
-    metadata = client.get_asset_metadata(mock_asset_id)
+    metadata = client.get_asset_metadata(mock_asset_id_01)
     expected_metadata = [
         {'type': 'date', 'group': None, 'name': 'ASSESSMENT_DATE', 'label': ['Date of assessment', 'Date de l’évaluation'], 'hint': None, 'required': True, 'question_code': 'ASSESSMENT_DATE'},
         {'type': 'select_one', 'group': 'GRP1', 'name': 'Question_1', 'label': ['1. Full question written in English', '1. Full question written in another language'], 'hint': None, 'required': None, 'question_code': 'RPT1/GRP1/Question_1'}
@@ -122,7 +123,7 @@ def test_get_asset_choice_items(mock_get_asset, mock_check_auth):
     client = KoboClient(base_url=base_url, api_token=api_token)
     
     # Call the get_asset_choice_items method
-    choice_items = client.get_asset_choice_items(mock_asset_id)
+    choice_items = client.get_asset_choice_items(mock_asset_id_01)
 
     # Expected output
     expected_choice_items = [
