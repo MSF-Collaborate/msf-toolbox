@@ -62,6 +62,7 @@ def test_list_assets(mock_check_auth):
         mock_get.assert_called_with(f'{BASE_URL}assets/', params=client.params, headers=client.headers)
         assert assets == mock_results['results'], "Asset list does not match expected results"
 
+
 # Test for getting asset UID
 @patch.object(KoboClient, '_check_auth', return_value={"Authenticated": True, "Status_code": 200})
 @patch.object(KoboClient, 'list_assets', return_value=mock_results['results'])
@@ -70,6 +71,7 @@ def test_get_asset_uid(mock_list_assets, mock_check_auth):
     asset_uid = client.get_asset_uid('Asset2')
     assert asset_uid == f'{MOCK_ASSET_ID_02}', "UID does not match expected value"
     mock_list_assets.assert_called_once()
+
 
 # Test for getting specific asset details
 @patch.object(KoboClient, '_check_auth', return_value={"Authenticated": True, "Status_code": 200})
@@ -84,6 +86,7 @@ def test_get_asset(mock_check_auth):
         asset = client.get_asset(MOCK_ASSET_ID_01)
         mock_get.assert_called_with(f'{BASE_URL}assets/{MOCK_ASSET_ID_01}', params=client.params, headers=client.headers)
         assert asset == mock_asset_content, "Asset content does not match expected value"
+
 
 # Test for getting paginated asset data
 @patch.object(KoboClient, '_check_auth', return_value={"Authenticated": True, "Status_code": 200})
@@ -102,6 +105,7 @@ def test_get_asset_data(mock_check_auth):
 
         asset_data = client.get_asset_data(MOCK_ASSET_ID_01)
         assert asset_data == [{'data': 'page1'}, {'data': 'page2'}], "Paginated asset data does not match expected results"
+
 
 # Test for getting asset metadata
 @patch.object(KoboClient, '_check_auth', return_value={"Authenticated": True, "Status_code": 200})
