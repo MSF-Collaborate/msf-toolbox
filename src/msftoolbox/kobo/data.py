@@ -1,6 +1,5 @@
-import json
 import requests
-from requests.auth import HTTPBasicAuth
+
 
 class KoboClient:
     """A class to interact with the Kobo API and extract data from specific assets/surveys."""
@@ -12,10 +11,10 @@ class KoboClient:
 
         Args:
             base_url (str): The base URL of the Kobo API.
-            api_token (str): The API token for token-based authentication. 
+            api_token (str): The API token for token-based authentication.
         """
         self.base_url = base_url
-        self.params = { 
+        self.params = {
             "format": "json"
         }
         self.headers = {
@@ -32,10 +31,9 @@ class KoboClient:
                 f"Error: {self.auth_status.get('Error')}"
             )
             raise RuntimeError(msg)
-        else:
-            print(f"Authentication succeeded")
+        print("Authentication succeeded")
 
-    def _check_auth(self): 
+    def _check_auth(self):
         # Check authentication by checking access to assets
         url = f"{self.base_url}/assets/"
         try:
@@ -69,7 +67,7 @@ class KoboClient:
         """
         url = f'{self.base_url}assets/'
         response = requests.get(url, params=self.params, headers=self.headers)
-        
+
         if response.status_code == 200:
             response_json = response.json()
             return response_json['results']
@@ -91,17 +89,17 @@ class KoboClient:
         """
         try:
             assets = self.list_assets()
-            
+
             # Loop through each item in the list of assets
             for item in assets:
                 # Check if the current item's name matches the asset_name
                 if item.get('name') == asset_name:
                     # Return the UID if a match is found
                     return item.get('uid')
-            
+
             # If no match is found, raise a ValueError
             raise ValueError(f"Asset name '{asset_name}' not found.")
-        
+
         except requests.exceptions.HTTPError as e:
             # Handle HTTP errors if needed
             raise e
@@ -121,7 +119,7 @@ class KoboClient:
         """
         url = f'{self.base_url}assets/{asset_uid}'
         response = requests.get(url, params=self.params, headers=self.headers)
-        
+
         if response.status_code == 200:
             response_json = response.json()
             return response_json
@@ -181,14 +179,14 @@ class KoboClient:
         """
         asset_dict = self.get_asset(asset_uid)
         survey_items = asset_dict['content']['survey']
-        
+
         extracted_data = []
 
         for item in survey_items:
-            type = item.get('type')
+            item_type = item.get('type')
 
             # Extract group from $xpath
-            xpath = item.get('$xpath', '') # None?
+            xpath = item.get('$xpath', '')
             path_parts = xpath.split('/')
 
             # Determine the  group based on the path parts
@@ -209,7 +207,7 @@ class KoboClient:
 
             # Create a dictionary with the extracted data
             data_entry = {
-                'type': type,
+                'type': item_type,
                 'group': group,
                 'name': name,
                 'label': label,
@@ -220,7 +218,6 @@ class KoboClient:
             extracted_data.append(data_entry)
 
         return extracted_data
-
 
     def get_asset_choice_items(self, asset_uid):
         """
@@ -255,7 +252,7 @@ class KoboClient:
 
             # Create a dictionary with the extracted data
             data_entry = {
-                'list_name':list_name,
+                'list_name': list_name,
                 'name': name,
                 'label': label
             }
