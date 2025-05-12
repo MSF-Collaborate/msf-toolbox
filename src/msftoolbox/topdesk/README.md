@@ -16,7 +16,7 @@
 To use the TopDesk Incident Client, you need the base URL for the TopDesk API and your authentication credentials (username and password).
 
 ```python
-from topdesk_client import TopDeskIncidentClient
+from msftoolbox.topdesk.data import TopDeskIncidentClient
 
 client = TopDeskIncidentClient(
     topdesk_url="https://topdesk.example.com", 
