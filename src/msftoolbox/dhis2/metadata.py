@@ -54,7 +54,7 @@ class Dhis2MetadataClient:
         auth = None
 
         if self.dhis2_personal_access_token:
-            headers['Authorization'] = f'Bearer {self.dhis2_personal_access_token}'
+            headers['Authorization'] = f'ApiToken {self.dhis2_personal_access_token}'
         elif self.dhis2_username and self.dhis2_password:
             auth = HTTPBasicAuth(self.dhis2_username, self.dhis2_password)
         else:
