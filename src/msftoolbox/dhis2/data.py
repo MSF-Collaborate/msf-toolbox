@@ -4,7 +4,7 @@ Module to interact with the DHIS2 server and manage metadata and data values.
 
 import json
 import requests
-
+from requests.auth import HTTPBasicAuth
 
 class Dhis2DataValuesClient:
     """
@@ -13,7 +13,7 @@ class Dhis2DataValuesClient:
     This class provides methods to send, read, and delete data values in DHIS2.
     """
 
-    def __init__(self, username=None, password=None, server_url=None, timeout=10):
+    def __init__(self, username=None, password=None, server_url=None, personal_access_token=None, timeout=10):
         """
         Initializes the DhisDataValues instance with optional DHIS2 server credentials and URL.
 
@@ -26,25 +26,8 @@ class Dhis2DataValuesClient:
         self.dhis2_username = username
         self.dhis2_password = password
         self.dhis2_server_url = server_url
+        self.dhis2_personal_access_token = personal_access_token
         self.timeout = timeout
-
-    def configure_dhis2_server(self, username=None, password=None, server_url=None):
-        """
-        Configures the DHIS2 server credentials and URL.
-
-        This method allows updating the DHIS2 server username, password, and URL.
-
-        Args:
-            username (str, optional): DHIS2 username. Defaults to None.
-            password (str, optional): DHIS2 password. Defaults to None.
-            server_url (str, optional): DHIS2 server URL. Defaults to None.
-        """
-        if username is not None:
-            self.dhis2_username = username
-        if password is not None:
-            self.dhis2_password = password
-        if server_url is not None:
-            self.dhis2_server_url = server_url
 
     def send_data_values(self, data_values, content_type='json', **kwargs):
         """
@@ -69,13 +52,25 @@ class Dhis2DataValuesClient:
         else:
             data = data_values
 
+        timeout = self.timeout
+        auth = None
+
+        if self.dhis2_personal_access_token:
+            headers['Authorization'] = f'ApiToken {self.dhis2_personal_access_token}'
+        elif self.dhis2_username and self.dhis2_password:
+            auth = HTTPBasicAuth(self.dhis2_username, self.dhis2_password)
+        else:
+            raise ValueError("Authentication credentials are not provided. Please provide a username and password or a personal access token.")
+
         response = requests.post(
             url,
-            auth=(self.dhis2_username, self.dhis2_password),
+            auth=auth,
             headers=headers,
             params=params,
             data=data,
+            timeout=timeout
         )
+        
         response.raise_for_status()
         return response.json()
 
@@ -92,10 +87,24 @@ class Dhis2DataValuesClient:
         url = f'{self.dhis2_server_url}/api/dataValueSets'
         params = {k: v for k, v in kwargs.items() if v is not None}
 
+        timeout = self.timeout
+
+        headers = {}
+        auth = None
+
+        if self.dhis2_personal_access_token:
+            headers['Authorization'] = f'ApiToken {self.dhis2_personal_access_token}'
+        elif self.dhis2_username and self.dhis2_password:
+            auth = HTTPBasicAuth(self.dhis2_username, self.dhis2_password)
+        else:
+            raise ValueError("Authentication credentials are not provided. Please provide a username and password or a personal access token.")
+
         response = requests.get(
             url,
-            auth=(self.dhis2_username, self.dhis2_password),
+            auth=auth,
+            headers=headers,
             params=params,
+            timeout=timeout
         )
         response.raise_for_status()
         return response.json()
@@ -123,11 +132,26 @@ class Dhis2DataValuesClient:
             'cc': attribute_option_combo,
         }
 
+        timeout = self.timeout
+
+        headers = {}
+        auth = None
+
+        if self.dhis2_personal_access_token:
+            headers['Authorization'] = f'ApiToken {self.dhis2_personal_access_token}'
+        elif self.dhis2_username and self.dhis2_password:
+            auth = HTTPBasicAuth(self.dhis2_username, self.dhis2_password)
+        else:
+            raise ValueError("Authentication credentials are not provided. Please provide a username and password or a personal access token.")
+
         response = requests.delete(
             url,
-            auth=(self.dhis2_username, self.dhis2_password),
+            auth=auth,
+            headers=headers,
             params=params,
+            timeout=timeout
         )
+
         response.raise_for_status()
         return response.json()
 
@@ -145,11 +169,22 @@ class Dhis2DataValuesClient:
         headers = {'Content-Type': 'application/json'}
         data = json.dumps(data_value)
 
+        timeout = self.timeout
+        auth = None
+
+        if self.dhis2_personal_access_token:
+            headers['Authorization'] = f'ApiToken {self.dhis2_personal_access_token}'
+        elif self.dhis2_username and self.dhis2_password:
+            auth = HTTPBasicAuth(self.dhis2_username, self.dhis2_password)
+        else:
+            raise ValueError("Authentication credentials are not provided. Please provide a username and password or a personal access token.")
+
         response = requests.post(
             url,
-            auth=(self.dhis2_username, self.dhis2_password),
+            auth=auth,
             headers=headers,
             data=data,
+            timeout=timeout
         )
         response.raise_for_status()
         return response.json()
@@ -177,10 +212,25 @@ class Dhis2DataValuesClient:
             'cc': attribute_option_combo,
         }
 
+        timeout = self.timeout
+
+        headers = {}
+        auth = None
+
+        if self.dhis2_personal_access_token:
+            headers['Authorization'] = f'ApiToken {self.dhis2_personal_access_token}'
+        elif self.dhis2_username and self.dhis2_password:
+            auth = HTTPBasicAuth(self.dhis2_username, self.dhis2_password)
+        else:
+            raise ValueError("Authentication credentials are not provided. Please provide a username and password or a personal access token.")
+
         response = requests.get(
             url,
-            auth=(self.dhis2_username, self.dhis2_password),
+            auth=auth,
+            headers=headers,
             params=params,
+            timeout=timeout
         )
+
         response.raise_for_status()
         return response.json()

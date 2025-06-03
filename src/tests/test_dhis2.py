@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 from msftoolbox.dhis2.metadata import Dhis2MetadataClient
 from msftoolbox.dhis2.data import Dhis2DataValuesClient
 import requests
+from requests.auth import HTTPBasicAuth
 import json
 
 def test_Dhis2MetadataClient_init():
@@ -10,23 +11,6 @@ def test_Dhis2MetadataClient_init():
     assert metadata.dhis2_username == 'user'
     assert metadata.dhis2_password == 'pass'
     assert metadata.dhis2_server_url == 'http://example.com'
-
-def test_Dhis2MetadataClient_configure_dhis2_server():
-    metadata = Dhis2MetadataClient(username='user', password='pass', server_url='http://example.com')
-    metadata.configure_dhis2_server(username='newuser')
-    assert metadata.dhis2_username == 'newuser'
-    assert metadata.dhis2_password == 'pass'
-    assert metadata.dhis2_server_url == 'http://example.com'
-
-    metadata.configure_dhis2_server(password='newpass', server_url='http://newserver.com')
-    assert metadata.dhis2_username == 'newuser'
-    assert metadata.dhis2_password == 'newpass'
-    assert metadata.dhis2_server_url == 'http://newserver.com'
-
-    metadata.configure_dhis2_server(username=None, password=None, server_url=None)
-    assert metadata.dhis2_username == 'newuser'
-    assert metadata.dhis2_password == 'newpass'
-    assert metadata.dhis2_server_url == 'http://newserver.com'
 
 @patch('requests.get')
 def test_get_response_success(mock_get):
@@ -39,7 +23,7 @@ def test_get_response_success(mock_get):
     url = 'http://example.com/api/someendpoint'
     result = metadata.get_response(url)
 
-    mock_get.assert_called_with(url, auth=('user', 'pass'), params=None)
+    mock_get.assert_called_with(url, auth=HTTPBasicAuth('user', 'pass'), headers={}, params=None, timeout=10)
     assert result == {'key': 'value'}
 
 @patch('requests.get')
@@ -55,7 +39,7 @@ def test_get_response_auth_failure(mock_get):
     with pytest.raises(ValueError, match='Authentication failed. Check your username and password.'):
         metadata.get_response(url)
 
-    mock_get.assert_called_with(url, auth=('user', 'pass'), params=None)
+    mock_get.assert_called_with(url, auth=HTTPBasicAuth('user', 'pass'), headers={}, params=None, timeout=10)
 
 @patch('requests.get')
 def test_get_response_http_error(mock_get):
@@ -70,7 +54,7 @@ def test_get_response_http_error(mock_get):
     with pytest.raises(requests.HTTPError):
         metadata.get_response(url)
 
-    mock_get.assert_called_with(url, auth=('user', 'pass'), params=None)
+    mock_get.assert_called_with(url, auth=HTTPBasicAuth('user', 'pass'), headers={}, params=None, timeout=10)
 
 @patch('requests.get')
 def test_get_response_invalid_json(mock_get):
@@ -85,7 +69,7 @@ def test_get_response_invalid_json(mock_get):
     with pytest.raises(json.JSONDecodeError):
         metadata.get_response(url)
 
-    mock_get.assert_called_with(url, auth=('user', 'pass'), params=None)
+    mock_get.assert_called_with(url, auth=HTTPBasicAuth('user', 'pass'), headers={}, params=None, timeout=10)
 
 def test_get_all_org_units():
     metadata = Dhis2MetadataClient(username='user', password='pass', server_url='http://example.com')
@@ -314,7 +298,7 @@ def test_send_data_values_json(mock_post):
     expected_headers = {'Content-Type': 'application/json'}
     expected_params = {'dryRun': True}
     expected_data = json.dumps(data_values_json)
-    mock_post.assert_called_with(expected_url, auth=('user', 'pass'), headers=expected_headers, params=expected_params, data=expected_data)
+    mock_post.assert_called_with(expected_url, auth=HTTPBasicAuth('user', 'pass'), headers=expected_headers, params=expected_params, data=expected_data, timeout=10)
     assert result == {'status': 'SUCCESS'}
 
 @patch('requests.post')
@@ -332,7 +316,7 @@ def test_send_data_values_xml(mock_post):
     expected_headers = {'Content-Type': 'application/xml'}
     expected_params = {'preheatCache': True}
     expected_data = data_values_xml
-    mock_post.assert_called_with(expected_url, auth=('user', 'pass'), headers=expected_headers, params=expected_params, data=expected_data)
+    mock_post.assert_called_with(expected_url, auth=HTTPBasicAuth('user', 'pass'), headers=expected_headers, params=expected_params, data=expected_data, timeout=10)
     assert result == {'status': 'SUCCESS'}
 
 @patch('requests.get')
@@ -347,7 +331,7 @@ def test_read_data_values(mock_get):
 
     expected_url = 'http://example.com/api/dataValueSets'
     expected_params = {'dataSet': 'ds1', 'period': '202001', 'orgUnit': 'ou1'}
-    mock_get.assert_called_with(expected_url, auth=('user', 'pass'), params=expected_params)
+    mock_get.assert_called_with(expected_url, auth=HTTPBasicAuth('user', 'pass'), params=expected_params, headers={}, timeout=10)
     assert result == {'dataValues': [{'dataElement': 'de1', 'value': '10'}]}
 
 @patch('requests.delete')
@@ -362,7 +346,7 @@ def test_delete_data_value(mock_delete):
 
     expected_url = 'http://example.com/api/dataValues'
     expected_params = {'de': 'de1', 'pe': '202001', 'ou': 'ou1', 'co': None, 'cc': None}
-    mock_delete.assert_called_with(expected_url, auth=('user', 'pass'), params=expected_params)
+    mock_delete.assert_called_with(expected_url, auth=HTTPBasicAuth('user', 'pass'), params=expected_params, headers={}, timeout=10)
     assert result == {'status': 'SUCCESS'}
 
 @patch('requests.post')
@@ -387,7 +371,7 @@ def test_send_individual_data_value(mock_post):
     expected_url = 'http://example.com/api/dataValues'
     expected_headers = {'Content-Type': 'application/json'}
     expected_data = json.dumps(data_value)
-    mock_post.assert_called_with(expected_url, auth=('user', 'pass'), headers=expected_headers, data=expected_data)
+    mock_post.assert_called_with(expected_url, auth=HTTPBasicAuth('user', 'pass'), headers=expected_headers, data=expected_data, timeout=10)
     assert result == {'status': 'SUCCESS'}
 
 @patch('requests.get')
@@ -402,5 +386,5 @@ def test_read_individual_data_value(mock_get):
 
     expected_url = 'http://example.com/api/dataValues'
     expected_params = {'de': 'de1', 'pe': '202001', 'ou': 'ou1', 'co': None, 'cc': None}
-    mock_get.assert_called_with(expected_url, auth=('user', 'pass'), params=expected_params)
+    mock_get.assert_called_with(expected_url, auth=HTTPBasicAuth('user', 'pass'), params=expected_params, headers={}, timeout=10)
     assert result == {'dataValue': {'dataElement': 'de1', 'value': '10'}}
