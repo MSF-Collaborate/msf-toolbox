@@ -3,7 +3,7 @@ Module to interact with the DHIS2 server and manage metadata and data values.
 """
 
 import requests
-
+from requests.auth import HTTPBasicAuth
 
 class Dhis2MetadataClient:
     """
@@ -14,38 +14,22 @@ class Dhis2MetadataClient:
     and data sets.
     """
 
-    def __init__(self, username=None, password=None, server_url=None, timeout=10):
+    def __init__(self, username=None, password=None, server_url=None, personal_access_token=None, timeout=10):
         """
         Initializes the DhisMetadata instance with optional DHIS2 server credentials and URL.
 
         Args:
             username (str, optional): DHIS2 username. Defaults to None.
             password (str, optional): DHIS2 password. Defaults to None.
+            personal_access_token (str, optional): DHIS2 personal access token. Defaults to None
             server_url (str, optional): DHIS2 server URL. Defaults to None.
             timeout (int, optional): Default timeout for requests in seconds. Defaults to 10.
         """
         self.dhis2_username = username
         self.dhis2_password = password
+        self.dhis2_personal_access_token = personal_access_token
         self.dhis2_server_url = server_url
         self.timeout = timeout
-
-    def configure_dhis2_server(self, username=None, password=None, server_url=None):
-        """
-        Configures the DHIS2 server credentials and URL.
-
-        This method allows updating the DHIS2 server username, password, and URL.
-
-        Args:
-            username (str, optional): DHIS2 username. Defaults to None.
-            password (str, optional): DHIS2 password. Defaults to None.
-            server_url (str, optional): DHIS2 server URL. Defaults to None.
-        """
-        if username is not None:
-            self.dhis2_username = username
-        if password is not None:
-            self.dhis2_password = password
-        if server_url is not None:
-            self.dhis2_server_url = server_url
 
     def get_response(self, url, params=None, timeout=None):
         """
@@ -65,11 +49,25 @@ class Dhis2MetadataClient:
         """
         if timeout is None:
             timeout = self.timeout
+
+        headers = {}
+        auth = None
+
+        if self.dhis2_personal_access_token:
+            headers['Authorization'] = f'Bearer {self.dhis2_personal_access_token}'
+        elif self.dhis2_username and self.dhis2_password:
+            auth = HTTPBasicAuth(self.dhis2_username, self.dhis2_password)
+        else:
+            raise ValueError("Authentication credentials are not provided. Please provide a username and password or a personal access token.")
+
         response = requests.get(
             url,
-            auth=(self.dhis2_username, self.dhis2_password),
+            auth=auth,
+            headers=headers,
             params=params,
+            timeout=timeout
         )
+        
         if response.status_code == 401:
             raise ValueError("Authentication failed. Check your username and password.")
         response.raise_for_status()

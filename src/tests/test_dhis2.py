@@ -11,23 +11,6 @@ def test_Dhis2MetadataClient_init():
     assert metadata.dhis2_password == 'pass'
     assert metadata.dhis2_server_url == 'http://example.com'
 
-def test_Dhis2MetadataClient_configure_dhis2_server():
-    metadata = Dhis2MetadataClient(username='user', password='pass', server_url='http://example.com')
-    metadata.configure_dhis2_server(username='newuser')
-    assert metadata.dhis2_username == 'newuser'
-    assert metadata.dhis2_password == 'pass'
-    assert metadata.dhis2_server_url == 'http://example.com'
-
-    metadata.configure_dhis2_server(password='newpass', server_url='http://newserver.com')
-    assert metadata.dhis2_username == 'newuser'
-    assert metadata.dhis2_password == 'newpass'
-    assert metadata.dhis2_server_url == 'http://newserver.com'
-
-    metadata.configure_dhis2_server(username=None, password=None, server_url=None)
-    assert metadata.dhis2_username == 'newuser'
-    assert metadata.dhis2_password == 'newpass'
-    assert metadata.dhis2_server_url == 'http://newserver.com'
-
 @patch('requests.get')
 def test_get_response_success(mock_get):
     mock_response = MagicMock()
